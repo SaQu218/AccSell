@@ -9,20 +9,21 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 
 const app = express();
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Obsługa plików statycznych (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname, 'public')));  // Upewnij się, że pliki HTML są w folderze 'public'
 
 app.use(cors({
-    origin: "*", // Zmodyfikuj na specyficzną domenę produkcyjną (np. Vercel)
-    credentials: true,
+    origin: '*',  // Możesz to zmienić na konkretną domenę
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
 }));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(express.static(path.join(__dirname, 'public')));
 // Konfiguracja sesji
 app.use(session({
     secret: process.env.SESSION_SECRET || 'twojSuperSekretnyKlucz', // Wartość sesji z env lub domyślna
@@ -104,12 +105,13 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ message: 'Nieprawidłowe hasło' });
     }
 
-    // Ustawienie użytkownika w sesji
     req.session.user = {
         id: user._id,
         username: user.username,
         email: user.email
     };
+
+    console.log('Zalogowany użytkownik:', req.session.user);  // Sprawdź, czy sesja działa
 
     res.status(200).json({ message: 'Zalogowano pomyślnie' });
 });
