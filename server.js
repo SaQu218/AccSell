@@ -116,7 +116,6 @@ app.post('/login', async (req, res) => {
     console.log('Zalogowany użytkownik:', req.session.user);  // Sprawdź, czy sesja została prawidłowo ustawiona
 
     res.status(200).json({ message: 'Zalogowano pomyślnie' });
-    res.redirect('/welcome');
 });
 
 // Sprawdzanie, czy użytkownik jest zalogowany
@@ -127,6 +126,20 @@ function isLoggedIn(req, res, next) {
     console.log('Brak sesji użytkownika, przekierowanie na index.html');
     res.redirect('/index');  // Przekierowanie na stronę logowania, jeśli użytkownik nie jest zalogowany
 }
+app.get('/is_logged_in', (req, res) => {
+    if (req.session.user) {
+        return res.json({
+            loggedIn: true,
+            username: req.session.user.username
+        });
+    }
+    res.json({ loggedIn: false });
+});
+
+app.get('/welcome', isLoggedIn, (req, res) => {
+    console.log('Sesja użytkownika:', req.session);  // Dodaj logowanie sesji
+    res.sendFile(path.join(__dirname, 'public', 'welcome.html'));  // Strona powitalna
+});
 // Wylogowanie
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -138,19 +151,8 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// Sprawdzanie, czy użytkownik jest zalogowany przed przekierowaniem do stron chronionych
-function isLoggedIn(req, res, next) {
-    if (req.session.user) {
-        return next();
-    }
-    res.redirect('/index'); // Przekierowanie na stronę logowania, jeśli użytkownik nie jest zalogowany
-}
 
 // Strony powitalne, home, settings itp.
-app.get('/welcome', isLoggedIn, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'welcome.html'));  // Strona powitalna
-});
-
 app.get('/home', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'home.html'));  // Strona główna
 });

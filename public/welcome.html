@@ -83,11 +83,13 @@
     </div>
 
     <script>
-        fetch('/is_logged_in')
+       fetch('/is_logged_in')
     .then(response => response.json())
     .then(data => {
         if (!data.loggedIn) {
             window.location.href = '/index';  // Jeśli nie jest zalogowany, przekieruj na stronę logowania
+        } else {
+            document.querySelector('#username strong').textContent = data.username;
         }
     })
     .catch(error => {
