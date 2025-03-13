@@ -30,9 +30,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // Ustawienie secure na true tylko w produkcji
+        secure: process.env.NODE_ENV === 'production', // Tylko w produkcji
         httpOnly: true,  // Zabezpiecza ciasteczka przed dostępem z JS
-        maxAge: 24 * 60 * 60 * 1000  // Opcjonalnie ustaw datę wygaśnięcia ciasteczka na 1 dzień
+        maxAge: 24 * 60 * 60 * 1000  // Czas życia ciasteczka: 1 dzień
     }
 }));
 
@@ -94,7 +94,6 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
     const user = await Users.findOne({ username });
 
     if (!user) {
@@ -128,13 +127,13 @@ function isLoggedIn(req, res, next) {
 }
 
 app.get('/is_logged_in', (req, res) => {
-    if (req.session.user) {
-        return res.json({
-            loggedIn: true,
-            username: req.session.user.username
-        });
+    if (req.session && req.session.user) {
+        console.log('Zalogowany użytkownik:', req.session.user); // Sprawdź, czy sesja jest poprawna
+        res.json({ loggedIn: true, user: req.session.user });
+    } else {
+        console.log('Brak aktywnej sesji');  // Sprawdź, dlaczego sesja jest pusta
+        res.json({ loggedIn: false });
     }
-    res.json({ loggedIn: false });
 });
 
 app.get('/welcome.html', isLoggedIn, (req, res) => {
@@ -148,7 +147,7 @@ app.get('/logout', (req, res) => {
         if (err) {
             return res.status(500).json({ message: 'Błąd podczas wylogowywania' });
         }
-        res.clearCookie('connect.sid'); // Usuwanie ciasteczka sesji
+        res.clearCookie('connect.sid');  // Usuwanie ciasteczka sesji
         res.json({ message: 'Wylogowano pomyślnie' });
     });
 });
