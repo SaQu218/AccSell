@@ -86,19 +86,23 @@
         </div>
         <button class="pay-button" onclick="pay()">Zapłać</button>
     </div>
+
     <script>
         const stripe = Stripe("pk_test_51R2HeHDFinv4XW4HiOmJ9xDiLsit5j9GS31hAgOZk7II5KlzaSFW1hnB2U0NWcnjNzwZHtwSXzbPgvIjCqATN9SE00RjiI8n5r"); // Wklej swój klucz Stripe
         
+        // Funkcja do pobierania parametru z URL
         function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
         }
-        
+
+        // Wartość produktu z URL
         const product = getUrlParameter('product');
         if (product) {
             document.getElementById('purchase-info').textContent = "Wybrano: " + decodeURIComponent(product.replace(/\+/g, " "));
         }
-        
+
+        // Funkcja do zaznaczania metody płatności
         function selectPayment(method, event) {
             document.querySelectorAll('.payment-option').forEach(option => {
                 option.classList.remove('selected');
@@ -106,24 +110,28 @@
             document.getElementById(method).checked = true;
             event.currentTarget.classList.add('selected');
         }
-        
+
+        // Funkcja do obsługi płatności
         async function pay() {
             const selected = document.querySelector('input[name="payment"]:checked');
             if (!selected || selected.id !== 'stripe') {
                 alert("Wybierz metodę płatności Stripe!");
                 return;
             }
-            
-            const response = await fetch('/api/create-checkout-session', {
+
+            // Wysyłanie zapytania do API (musisz mieć backend na Vercel lub lokalnie)
+            const response = await fetch('https://acc-sell.vercel.app/api/create-checkout-session', {  // Zmieniony URL do Vercel
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ product: product })
+                body: JSON.stringify({ product: product })  // Przekazanie wybranego produktu
             });
-            
+
+            // Oczekiwanie na odpowiedź z backendu
             const session = await response.json();
+
+            // Przekierowanie do checkoutu Stripe
             await stripe.redirectToCheckout({ sessionId: session.id });
         }
-        
     </script>
 </body>
 </html>
