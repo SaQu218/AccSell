@@ -21,8 +21,8 @@ module.exports = async (req, res) => {
                     },
                 ],
                 mode: 'payment',
-                success_url: `${req.headers.origin}/success.html`, // Adres po udanej płatności
-                cancel_url: `${req.headers.origin}/cancel.html`,  // Adres po anulowanej płatności
+                success_url: `${req.headers.origin}/home.html`, // Adres po udanej płatności
+                cancel_url: `${req.headers.origin}/home.html`,  // Adres po anulowanej płatności
             });
 
             // Zwracamy identyfikator sesji do frontendu
