@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));  // Upewnij się, że pliki HTML są w folderze 'public'
 
 app.use(cors({
-    origin: 'https://acc-sell.vercel.app/index',  // Możesz to zmienić na konkretną domenę
+    origin: 'https://acc-sell.vercel.app',  // Możesz to zmienić na konkretną domenę
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
 }));
@@ -161,19 +161,19 @@ app.get('/index', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));  // Strona logowania
 });
 
-app.get('/konto_fb', (req, res) => {
+app.get('/konto_fb', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_fb.html'));  // Strona logowania
 });
 
-app.get('/konto_ig', (req, res) => {
+app.get('/konto_ig', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_ig.html'));  // Strona logowania
 });
 
-app.get('/konto_steam', (req, res) => {
+app.get('/konto_steam', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_steam.html'));  // Strona logowania
 });
 
-app.get('/kup', (req, res) => {
+app.get('/kup', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'kup.html'));  // Strona logowania
 });
 
