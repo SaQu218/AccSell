@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));  // Upewnij się, że pliki HTML są w folderze 'public'
 
 app.use(cors({
-    origin: '*',  // Możesz to zmienić na konkretną domenę
+    origin: 'https://acc-sell.vercel.app/index',  // Możesz to zmienić na konkretną domenę
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
 }));
