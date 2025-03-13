@@ -149,53 +149,53 @@
         }
 
         .modal {
-    display: none;
-    position: fixed;
-    z-index: 2;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    width: 400px;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    box-sizing: border-box;
-}
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            width: 400px;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-sizing: border-box;
+        }
 
-.modal-content {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    width: 100%;
-    color: #fff;
-    box-sizing: border-box; /* Ensures padding doesn't affect the width */
-}
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            color: #fff;
+            box-sizing: border-box; /* Ensures padding doesn't affect the width */
+        }
 
-.modal-header {
-    font-size: 24px;
-    color: #ffffff;
-    margin-bottom: 20px;
-}
+        .modal-header {
+            font-size: 24px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
 
-.modal-body {
-    font-size: 18px;
-    color: #ffffff;
-    margin-bottom: 20px;
-}
+        .modal-body {
+            font-size: 18px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
 
-.close-btn {
-    background-color: #e94e77;
-    color: #ffffff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        .close-btn {
+            background-color: #e94e77;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-.close-btn:hover {
-    background-color: #d4416f;
-}
+        .close-btn:hover {
+            background-color: #d4416f;
+        }
 
         .cart-button {
             padding: 10px 20px;
@@ -252,13 +252,13 @@
                 Konta
             </button>
             <div class="dropdown-content">
-                <a href="konto_fb">Konto FB</a>
-                <a href="konto_ig">Konto IG</a>
-                <a href="konto_steam">Konto Steam</a>
+                <a href="konto_fb.html">Konto FB</a>
+                <a href="konto_ig.html">Konto IG</a>
+                <a href="konto_steam.html">Konto Steam</a>
             </div>
         </div>
         <div class="navbar-buttons">
-            <button class="settings-button" onclick="window.location.href='setting_profile'">Ustawienia</button>
+            <button class="settings-button" onclick="window.location.href='setting_profile.html'">Ustawienia</button>
             <button class="logout-button" onclick="logout()">Wyloguj się</button>
             <button class="cart-button" onclick="showCart()">Koszyk</button>
         </div>
@@ -267,7 +267,7 @@
     <div id="overlay" class="overlay"></div>
 
     <div class="content">
-        <h1>Witaj</span>!</h1>
+        <h1>Witaj!</h1>
         <p>U nas na stronie mamy do zaoferowania szeroki wybór kont do kupna.</p>
         <div class="offer-description">
             <p><i class="fab fa-steam"></i><strong>Konto Steam</strong> – dostęp do popularnych gier w atrakcyjnych cenach.</p>
@@ -303,7 +303,7 @@
             method: 'GET',
         }).then((response) => {
             if (response.ok) {
-                window.location.href = "index"; // Przekierowanie na stronę logowania po wylogowaniu
+                window.location.href = "index.html"; // Przekierowanie na stronę logowania po wylogowaniu
             } else {
                 alert('Błąd podczas wylogowywania');
             }

@@ -22,7 +22,7 @@ async function loginUser(event) {
 
         if (response.ok) {
             // Po pomyślnym zalogowaniu przekierowanie na welcome.html
-            window.location.href = '/welcome';
+            window.location.href = '/welcome.html';  // Zmienione z '/welcome' na '/welcome.html'
         } else {
             document.getElementById('message').innerText = result.message;
         }

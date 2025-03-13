@@ -118,12 +118,23 @@
             </div>
             <button type="submit" class="login-button">Zaloguj się</button>
             <div class="register-link">
-                Nie masz konta? <a href="register">Zarejestruj się</a>
+                Nie masz konta? <a href="register.html">Zarejestruj się</a>
             </div>
             <div id="message" class="error-message"></div>
         </form>
     </div>
-    <script src="login.js"></script>
+
+    <script>
+        // Przykładowa funkcja logowania, która przekierowuje użytkownika na home.html
+        function loginUser(event) {
+            event.preventDefault();
+            
+            // Tu dodajemy logikę logowania, np. sprawdzanie formularza
+
+            // Jeśli logowanie jest poprawne, przekierowujemy na stronę home.html
+            window.location.href = '/home.html';
+        }
+    </script>
 
 </body>
 </html>

@@ -125,7 +125,7 @@
 <body>
   <!-- Pasek nawigacyjny -->
   <div class="navbar">
-    <a href="/home" class="home-button">Strona główna</a>
+    <a href="home.html" class="home-button">Strona główna</a>
   </div>
 
   <!-- Kontener główny - ustawienia konta w centrum -->
@@ -171,7 +171,7 @@
         document.getElementById('profileEmailInput').value = user.email;
       } else {
         alert('Nie jesteś zalogowany!');
-        window.location.href = "/index";
+        window.location.href = "index.html";
       }
     }
 
@@ -228,9 +228,9 @@
         .then(response => response.json())
         .then(data => {
           alert(data.message);
-          window.location.href = "/index";
+          window.location.href = "index.html";  // Zmieniono przekierowanie na index.html po wylogowaniu
         });
     }
-</script>
+  </script>
 </body>
 </html>

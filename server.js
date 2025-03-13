@@ -85,7 +85,7 @@ app.post('/register', async (req, res) => {
     try {
         await user.save();
         console.log('Użytkownik zapisany:', user);
-        res.redirect('/welcome');
+        res.redirect('/welcome.html');  // Zmieniono na .html
     } catch (err) {
         console.error(err);
         res.send('Wystąpił błąd podczas zapisywania użytkownika');
@@ -124,8 +124,9 @@ function isLoggedIn(req, res, next) {
         return next();  // Kontynuuj, jeśli użytkownik jest zalogowany
     }
     console.log('Brak sesji użytkownika, przekierowanie na index.html');
-    res.redirect('/index');  // Przekierowanie na stronę logowania, jeśli użytkownik nie jest zalogowany
+    res.redirect('/index.html');  // Zmieniono na index.html
 }
+
 app.get('/is_logged_in', (req, res) => {
     if (req.session.user) {
         return res.json({
@@ -136,10 +137,11 @@ app.get('/is_logged_in', (req, res) => {
     res.json({ loggedIn: false });
 });
 
-app.get('/welcome', isLoggedIn, (req, res) => {
+app.get('/welcome.html', isLoggedIn, (req, res) => {
     console.log('Sesja użytkownika:', req.session);  // Dodaj logowanie sesji
     res.sendFile(path.join(__dirname, 'public', 'welcome.html'));  // Strona powitalna
 });
+
 // Wylogowanie
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
@@ -151,39 +153,38 @@ app.get('/logout', (req, res) => {
     });
 });
 
-
 // Strony powitalne, home, settings itp.
-app.get('/home', isLoggedIn, (req, res) => {
+app.get('/home.html', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'home.html'));  // Strona główna
 });
 
-app.get('/setting_profile', isLoggedIn, (req, res) => {
+app.get('/setting_profile.html', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'setting_profile.html'));  // Ustawienia profilu
 });
 
 // Strona logowania
-app.get('/index', (req, res) => {
+app.get('/index.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));  // Strona logowania
 });
 
-app.get('/konto_fb', isLoggedIn, (req, res) => {
+app.get('/konto_fb.html', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_fb.html'));  // Strona logowania
 });
 
-app.get('/konto_ig', isLoggedIn, (req, res) => {
+app.get('/konto_ig.html', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_ig.html'));  // Strona logowania
 });
 
-app.get('/konto_steam', isLoggedIn, (req, res) => {
+app.get('/konto_steam.html', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_steam.html'));  // Strona logowania
 });
 
-app.get('/kup', isLoggedIn, (req, res) => {
+app.get('/kup.html', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'kup.html'));  // Strona logowania
 });
 
 // Strona rejestracji
-app.get('/register', (req, res) => {
+app.get('/register.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'register.html'));  // Strona rejestracji
 });
 
