@@ -1,39 +1,29 @@
 async function loginUser(event) {
-    event.preventDefault(); // Zapobiega domyślnemu zachowaniu formularza
+    event.preventDefault();  // Zatrzymanie domyślnego działania formularza (czyli odświeżania strony)
 
-    // Pobieramy dane użytkownika
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
     try {
-        // Wysłanie danych do serwera
-        let response = await fetch('/login', {
+        const response = await fetch('/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
+            body: JSON.stringify({ username, password }),
         });
 
-        // Sprawdzamy odpowiedź z serwera
-        let messageElement = document.getElementById('message');
+        const data = await response.json();
+
         if (response.ok) {
-            let data = await response.json();
-            messageElement.className = 'success-message';
-            messageElement.textContent = data.message; // Pokaż komunikat sukcesu
-            setTimeout(() => {
-                window.location.href = "welcome"; // Przekierowanie po udanym logowaniu
-            }, 2000);
+            // Jeśli logowanie się powiodło, przekieruj do strony powitalnej
+            window.location.href = '/welcome';
         } else {
-            let errorData = await response.json();
-            messageElement.className = 'error-message';
-            messageElement.textContent = errorData.message; // Pokaż komunikat o błędzie
+            // Jeśli logowanie się nie udało, wyświetl komunikat o błędzie
+            document.getElementById('message').textContent = data.message || 'Wystąpił błąd.';
         }
     } catch (error) {
-        console.error('Błąd:', error);
-        alert('Wystąpił błąd podczas logowania. Spróbuj ponownie.');
+        console.error('Błąd logowania:', error);
+        document.getElementById('message').textContent = 'Błąd połączenia z serwerem';
     }
 }

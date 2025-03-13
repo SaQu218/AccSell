@@ -10,6 +10,9 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
+// Obsługa plików statycznych (HTML, CSS, JS)
+app.use(express.static(__dirname));  // Serwowanie plików w bieżącym katalogu
+
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -48,7 +51,7 @@ const userSchema = new mongoose.Schema({
 const Users = mongoose.model('Dane', userSchema);
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html')); // Główna strona logowania
 });
 
 app.post('/register', async (req, res) => {
@@ -87,12 +90,12 @@ app.post('/login', async (req, res) => {
     const user = await Users.findOne({ username });
 
     if (!user) {
-        return res.status(400).json({ message: 'Nieprawidłowa nazwa użytkownika lub hasło' });
+        return res.status(400).json({ message: 'Nieprawidłowa nazwa użytkownika' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(400).json({ message: 'Nieprawidłowa nazwa użytkownika lub hasło' });
+        return res.status(400).json({ message: 'Nieprawidłowe hasło' });
     }
 
     // Ustawienie użytkownika w sesji
@@ -134,25 +137,40 @@ function isLoggedIn(req, res, next) {
 
 // Strony powitalne, home, settings itp.
 app.get('/welcome', isLoggedIn, (req, res) => {
-    res.sendFile(path.join(__dirname, 'welcome.html'));
+    res.sendFile(path.join(__dirname, 'welcome.html'));  // Strona powitalna
 });
 
 app.get('/home', isLoggedIn, (req, res) => {
-    res.sendFile(path.join(__dirname, 'home.html'));
+    res.sendFile(path.join(__dirname, 'home.html'));  // Strona główna
 });
 
 app.get('/setting_profile', isLoggedIn, (req, res) => {
-    res.sendFile(path.join(__dirname, 'setting_profile.html'));
+    res.sendFile(path.join(__dirname, 'setting_profile.html'));  // Ustawienia profilu
 });
 
 // Strona logowania
 app.get('/index', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));  // Strona logowania
 });
 
+app.get('/konto_fb', (req, res) => {
+    res.sendFile(path.join(__dirname, 'konto_fb.html'));  // Strona logowania
+});
+
+app.get('/konto_ig', (req, res) => {
+    res.sendFile(path.join(__dirname, 'konto_ig.html'));  // Strona logowania
+});
+
+app.get('/konto_steam', (req, res) => {
+    res.sendFile(path.join(__dirname, 'konto_steam.html'));  // Strona logowania
+});
+
+app.get('/kup', (req, res) => {
+    res.sendFile(path.join(__dirname, 'kup.html'));  // Strona logowania
+});
 // Strona rejestracji
 app.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, 'register.html'));
+    res.sendFile(path.join(__dirname, 'register.html'));  // Strona rejestracji
 });
 
 // Ustawienia profilu

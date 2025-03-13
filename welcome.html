@@ -83,6 +83,17 @@
     </div>
 
     <script>
+        fetch('/is_logged_in')
+    .then(response => response.json())
+    .then(data => {
+        if (!data.loggedIn) {
+            window.location.href = '/index';  // Jeśli nie jest zalogowany, przekieruj na stronę logowania
+        }
+    })
+    .catch(error => {
+        console.error('Błąd podczas sprawdzania sesji:', error);
+        window.location.href = '/index';  // W przypadku błędu również przekieruj na stronę logowania
+    });
         // Pobieramy dane z localStorage
         const username = localStorage.getItem('username');
 
