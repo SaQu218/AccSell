@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konto Steam</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #100f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .top-bar {
+            background-color: #1a1a1a; 
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .home-button {
+            background: #4a90e2;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .home-button:hover {
+            background: #357abd;
+        }
+
+        .content {
+            padding: 50px;
+        }
+
+        .account-box {
+            background-color: #1a1a1a;
+            border: 2px solid #4a90e2;
+            border-radius: 10px;
+            padding: 20px;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+            width: 300px;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        .account-box i {
+            font-size: 30px;
+            color: #4a90e2;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .account-box p {
+            font-size: 18px;
+            margin: 5px 0;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .account-box .buy-button {
+            background-color: #ffd700;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .account-box .buy-button:hover {
+            background-color: #e6b800;
+        }
+
+        /* Styles for additional account boxes */
+        .account-box2, .account-box3 {
+            background-color: #1a1a1a;
+            border: 2px solid #4a90e2;
+            border-radius: 10px;
+            padding: 20px;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+            width: 300px;
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        .account-box2 i, .account-box3 i {
+            font-size: 30px;
+            color: #4a90e2;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .account-box2 p, .account-box3 p {
+            font-size: 18px;
+            margin: 5px 0;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .account-box2 .buy-button, .account-box3 .buy-button {
+            background-color: #ffd700;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .account-box2 .buy-button:hover, .account-box3 .buy-button:hover {
+            background-color: #e6b800;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <!-- Updated link for home page -->
+        <a href="home" class="home-button">Strona Główna</a>
+    </div>
+
+    <div class="content">
+        <h1>Witamy w dziale kont Steam</h1>
+        <p>Wybierz odpowiednią ofertę i dokonaj zakupu!</p>
+
+        <div class="account-box">
+            <i class="fa-brands fa-steam"></i>
+            <p><strong>Konto Steam: 2009</strong></p>
+            <p>Cena: <strong>120 zł</strong></p>
+            <a href="kup?product=Konto%20Steam%202009" class="buy-button">Kup</a>
+        </div>
+        <div class="account-box2">
+            <i class="fa-brands fa-steam"></i>
+            <p><strong>Konto Steam: 2019</strong></p>
+            <p>Cena: <strong>50 zł</strong></p>
+            <a href="kup?product=Konto%20Steam%202019" class="buy-button">Kup</a>
+        </div>
+        <div class="account-box3">
+            <i class="fa-brands fa-steam"></i>
+            <p><strong>Konto Steam: 2023 prime cs2</strong></p>
+            <p>Cena: <strong>90 zł</strong></p>
+            <a href="kup?product=Konto%20Steam%202025%20Prime" class="buy-button">Kup</a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Płatność</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #100f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .top-bar {
+            background-color: #1a1a1a;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .home-button {
+            background: #4a90e2;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        .home-button:hover {
+            background: #357abd;
+        }
+
+        .content {
+            padding: 50px;
+        }
+
+        .purchase-info {
+            margin-top: 30px;
+            font-size: 18px;
+            color: #4a90e2;
+            font-weight: bold;
+        }
+
+        .payment-option {
+            background-color: #1a1a1a;
+            border: 2px solid #4a90e2;
+            border-radius: 10px;
+            padding: 20px;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin: 20px;
+            width: 200px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .payment-option:hover {
+            background-color: #252525;
+        }
+
+        .payment-option input {
+            display: none;
+        }
+
+        .payment-option label {
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .payment-option i {
+            font-size: 30px;
+            margin-right: 10px;
+        }
+
+        .selected {
+            background-color: #357abd !important;
+            border-color: #ffffff;
+        }
+
+        .pay-button {
+            background: #4a90e2;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .pay-button:hover {
+            background: #357abd;
+        }
+
+        .options-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="home" class="home-button">Strona Główna</a>
+    </div>
+
+    <div class="content">
+        <h1>Wybierz metodę płatności</h1>
+
+        <!-- Wyświetlenie wybranego produktu -->
+        <div class="purchase-info" id="purchase-info">Wybrano: </div>
+
+        <div class="options-container">
+            <div class="payment-option" onclick="selectPayment('paypal', event)">
+                <input type="radio" name="payment" id="paypal">
+                <label for="paypal">
+                    <i class="fab fa-paypal" style="color: #ffc439;"></i> PayPal
+                </label>
+            </div>
+
+            <div class="payment-option" onclick="selectPayment('karta', event)">
+                <input type="radio" name="payment" id="karta">
+                <label for="karta">
+                    <i class="fas fa-credit-card" style="color: #ffffff;"></i> Karta
+                </label>
+            </div>
+
+            <div class="payment-option" onclick="selectPayment('stripe', event)">
+                <input type="radio" name="payment" id="stripe">
+                <label for="stripe">
+                    <i class="fab fa-stripe" style="color: #635bff;"></i> Stripe
+                </label>
+            </div>
+        </div>
+
+        <button class="pay-button" onclick="pay()">Zapłać</button>
+    </div>
+
+    <script>
+        // Funkcja pobierająca parametr z URL
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Wyświetlanie wybranego produktu
+        const product = getUrlParameter('product');
+        if (product) {
+            document.getElementById('purchase-info').textContent = "Wybrano: " + decodeURIComponent(product.replace(/\+/g, " "));
+        }
+
+        function selectPayment(method, event) {
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.getElementById(method).checked = true;
+            event.currentTarget.classList.add('selected');
+        }
+
+        function pay() {
+            const selected = document.querySelector('input[name="payment"]:checked');
+            if (selected) {
+                alert("Płatność przez: " + selected.id);
+            } else {
+                alert("Wybierz metodę płatności!");
+            }
+        }
+    </script>
+
+</body>
+</html>

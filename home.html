@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Użytkownika</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Twoje style */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1;
+            display: none;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .dropdown {
+            flex: auto;
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-button {
+            background: #4a90e2;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-button:hover {
+            background: #357abd;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: rgba(255, 255, 255, 0.05);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            backdrop-filter: blur(5px);
+            z-index: 1;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown-content a {
+            color: #ffffff;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .content {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .content h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .offer-description {
+            font-size: 18px;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .offer-description i {
+            font-size: 30px;
+            margin-right: 10px;
+        }
+
+        .navbar-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .logout-button, .settings-button {
+            padding: 10px 20px;
+            background: #e94e77;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .logout-button:hover {
+            background: #d4416f;
+        }
+
+        .settings-button {
+            background: #4a90e2;
+        }
+
+        .settings-button:hover {
+            background: #357abd;
+        }
+
+        .modal {
+    display: none;
+    position: fixed;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 400px;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    color: #fff;
+    box-sizing: border-box; /* Ensures padding doesn't affect the width */
+}
+
+.modal-header {
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.modal-body {
+    font-size: 18px;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.close-btn {
+    background-color: #e94e77;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    background-color: #d4416f;
+}
+
+        .cart-button {
+            padding: 10px 20px;
+            background: #4caf50;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .cart-button:hover {
+            background: #357abd;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .cart-item label {
+            font-size: 18px;
+            margin-left: 10px;
+        }
+
+        .cart-item input {
+            margin-right: 0px;
+        }
+
+        .delete-btn {
+            background: #e94e77;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #d4416f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="dropdown">
+            <button class="dropdown-button">
+                <span class="menu-icon">&#9776;</span>
+                Konta
+            </button>
+            <div class="dropdown-content">
+                <a href="konto_fb">Konto FB</a>
+                <a href="konto_ig">Konto IG</a>
+                <a href="konto_steam">Konto Steam</a>
+            </div>
+        </div>
+        <div class="navbar-buttons">
+            <button class="settings-button" onclick="window.location.href='setting_profile'">Ustawienia</button>
+            <button class="logout-button" onclick="logout()">Wyloguj się</button>
+            <button class="cart-button" onclick="showCart()">Koszyk</button>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay"></div>
+
+    <div class="content">
+        <h1>Witaj</span>!</h1>
+        <p>U nas na stronie mamy do zaoferowania szeroki wybór kont do kupna.</p>
+        <div class="offer-description">
+            <p><i class="fab fa-steam"></i><strong>Konto Steam</strong> – dostęp do popularnych gier w atrakcyjnych cenach.</p>
+            <p><i class="fab fa-instagram"></i><strong>Konto Instagram</strong> – idealne do rozwijania swojego profilu lub biznesu.</p>
+            <p><i class="fab fa-facebook"></i><strong>Konto Facebook</strong> – gotowe konta do różnych zastosowań.</p>
+        </div>
+    </div>
+
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                Twoje zakupy
+            </div>
+            <div class="modal-body">
+                <div class="cart-item">
+                    <input type="checkbox" name="cartItem" id="cartItem1">
+                    <label for="cartItem1">Konto Steam 2009</label>
+                </div>
+                <div class="cart-item">
+                    <input type="checkbox" name="cartItem" id="cartItem2">
+                    <label for="cartItem2">Konto IG</label>
+                </div>
+            </div>
+            <button class="delete-btn" onclick="deleteSelectedItems()">Usuń wybrane</button>
+            <button class="close-btn" onclick="closeCart()">Zamknij</button>
+        </div>
+    </div>
+
+    <script>
+     // Funkcja wylogowująca użytkownika
+     function logout() {
+        fetch('/logout', {
+            method: 'GET',
+        }).then((response) => {
+            if (response.ok) {
+                window.location.href = "index"; // Przekierowanie na stronę logowania po wylogowaniu
+            } else {
+                alert('Błąd podczas wylogowywania');
+            }
+        });
+    }
+
+    function showCart() {
+        document.getElementById("cartModal").style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+    }
+
+    function closeCart() {
+        document.getElementById("cartModal").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    // Funkcja do usuwania zaznaczonych elementów
+    function deleteSelectedItems() {
+        const checkboxes = document.querySelectorAll('input[name="cartItem"]:checked');
+        checkboxes.forEach(checkbox => {
+            const cartItem = checkbox.closest('.cart-item');
+            cartItem.remove();
+        });
+    }
+
+    // Obsługa overlay dla modalu
+    document.getElementById("overlay").addEventListener("click", closeCart);
+    </script>
+
+</body>
+</html>

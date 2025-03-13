@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ustawienia Konta</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Globalny styl dla całej strony */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100vh;
+    }
+
+    /* Nagłówek */
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    /* Pasek nawigacyjny */
+    .navbar {
+      display: flex;
+      justify-content: center;
+      padding: 10px 20px;
+      background-color: #2d3e50;
+      color: white;
+    }
+
+    .home-button, .logout-button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin: 5px;
+    }
+
+    .logout-button {
+      background-color: #f44336;
+    }
+
+    .logout-button:hover, .home-button:hover {
+      background-color: #45a049;
+    }
+
+    /* Kontener ustawień */
+    .settings-container {
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .setting-item {
+      margin-bottom: 20px;
+    }
+
+    .setting-item label {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .setting-item span {
+      font-size: 18px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .setting-item input {
+      display: none;
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .toggle-button {
+      background-color: #008CBA;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      width: 100%;
+    }
+
+    .toggle-button:hover {
+      background-color: #007b8f;
+    }
+
+    /* Kontener główny */
+    .content-container {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    /* Stopka */
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Pasek nawigacyjny -->
+  <div class="navbar">
+    <a href="/home" class="home-button">Strona główna</a>
+  </div>
+
+  <!-- Kontener główny - ustawienia konta w centrum -->
+  <div class="content-container">
+    <div class="settings-container">
+      <h2>Ustawienia Konta</h2>
+      <div class="setting-item">
+        <label for="profileUsername">Nazwa Użytkownika:</label>
+        <span id="profileUsernameDisplay"></span>
+        <input type="text" id="profileUsernameInput" placeholder="Wprowadź nową nazwę użytkownika" />
+      </div>
+      <div class="setting-item">
+        <label for="profilePassword">Hasło:</label>
+        <span id="profilePasswordDisplay"></span>
+        <input type="password" id="profilePasswordInput" placeholder="Wprowadź nowe hasło" />
+      </div>
+      <div class="setting-item">
+        <label for="profileEmail">Email:</label>
+        <span id="profileEmailDisplay"></span>
+        <input type="email" id="profileEmailInput" placeholder="Wprowadź nowy email" />
+      </div>
+      <button class="toggle-button" onclick="toggleEdit()">Edytuj dane</button>
+    </div>
+  </div>
+
+  <!-- Stopka z przyciskiem wylogowania -->
+  <div class="footer">
+    <button class="logout-button" onclick="logout()">Wyloguj się</button>
+  </div>
+
+  <script>
+    // Funkcja do ładowania danych użytkownika
+    async function loadProfile() {
+      const response = await fetch('/is_logged_in');
+      const data = await response.json();
+
+      if (data.loggedIn) {
+        const user = data.user;
+        document.getElementById('profileUsernameDisplay').textContent = user.username;
+        document.getElementById('profilePasswordDisplay').textContent = "********";  // Hasło nie jest pokazane
+        document.getElementById('profileEmailDisplay').textContent = user.email;
+        document.getElementById('profileUsernameInput').value = user.username;
+        document.getElementById('profileEmailInput').value = user.email;
+      } else {
+        alert('Nie jesteś zalogowany!');
+        window.location.href = "/index";
+      }
+    }
+
+    window.onload = loadProfile;  // Załaduj dane po załadowaniu strony
+
+    // Funkcja do przełączania trybu edycji
+    function toggleEdit() {
+      const usernameInput = document.getElementById('profileUsernameInput');
+      const passwordInput = document.getElementById('profilePasswordInput');
+      const emailInput = document.getElementById('profileEmailInput');
+      const button = document.querySelector('.toggle-button');
+  
+      if (button.textContent === "Edytuj dane") {
+        usernameInput.style.display = "block";
+        passwordInput.style.display = "block";
+        emailInput.style.display = "block";
+        button.textContent = "Zapisz zmiany";
+      } else {
+        updateProfile();
+        usernameInput.style.display = "none";
+        passwordInput.style.display = "none";
+        emailInput.style.display = "none";
+        button.textContent = "Edytuj dane";
+      }
+    }
+
+    // Funkcja do wysyłania danych do serwera
+    async function updateProfile() {
+      const newUsername = document.getElementById('profileUsernameInput').value;
+      const newPassword = document.getElementById('profilePasswordInput').value;
+      const newEmail = document.getElementById('profileEmailInput').value;
+
+      const response = await fetch('/update_profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newUsername, newPassword, newEmail }),
+      });
+
+      if (response.ok) {
+        alert('Dane zostały zaktualizowane');
+        const data = await response.json();
+        // Załaduj zaktualizowane dane z odpowiedzi
+        const user = data.user;
+        document.getElementById('profileUsernameDisplay').textContent = user.username;
+        document.getElementById('profileEmailDisplay').textContent = user.email;
+      } else {
+        alert('Wystąpił błąd podczas aktualizacji danych');
+      }
+    }
+
+    // Funkcja do wylogowania użytkownika
+    function logout() {
+      fetch('/logout')
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+          window.location.href = "/index";
+        });
+    }
+</script>
+</body>
+</html>

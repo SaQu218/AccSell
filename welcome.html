@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witaj!</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .welcome-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+
+        .welcome-container h1 {
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        .welcome-container p {
+            font-size: 18px;
+            color: #cccccc;
+        }
+
+        .redirect-message {
+            font-size: 16px;
+            color: #ffcc00;
+        }
+
+        /* Stylowanie paska ładowania */
+        .loading-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            width: 0;
+            height: 100%;
+            background-color: #4caf50;
+            border-radius: 5px;
+            animation: load 5s linear forwards;
+        }
+
+        @keyframes load {
+            100% {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="welcome-container">
+        <p id="username">Witaj, <strong></strong></p>
+        <p class="redirect-message">Za chwilę zostaniesz przekierowany na stronę główną...</p>
+
+        <!-- Pasek ładowania -->
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        // Pobieramy dane z localStorage
+        const username = localStorage.getItem('username');
+
+        // Jeśli brak nazwy użytkownika, ustaw komunikat domyślny lub przekierowanie
+        if (username) {
+            document.querySelector('#username strong').textContent = username;
+        } else {
+            document.querySelector('#username').innerHTML = 'Witaj, <strong>Gościu</strong>';
+            // Można dodać inne zachowanie, np. przekierowanie do logowania
+        }
+
+        window.onload = function() {
+            setTimeout(function() {
+                window.location.href = '/home'; // Przekierowanie na stronę home
+            }, 5000); // 5 sekund opóźnienia
+        };
+    </script>
+</body>
+</html>

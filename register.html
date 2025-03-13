@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+            color: #ffffff;
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(5px);
+        }
+
+        .register-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #333333;
+            border-radius: 5px;
+            background: #1f1f1f;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 12px;
+            background: #4a90e2;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .register-button:hover {
+            background: #357abd;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Rejestracja</h2>
+        <form action="/register" method="POST" id="registerForm" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="username">Nazwa użytkownika</label>
+                <input type="text" id="username" name="username" placeholder="Wprowadź nazwę użytkownika" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Wprowadź email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Hasło</label>
+                <input type="password" id="password" name="password" placeholder="Wprowadź hasło" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Powtórz hasło</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Powtórz hasło" required>
+            </div>
+            <button type="submit" class="register-button">Zarejestruj się</button>
+            <div class="login-link">
+                Masz już konto? <a href="index">Zaloguj się</a>
+            </div>
+            <div id="errorMessage" class="error-message"></div>
+        </form>
+    </div>
+
+    <script>
+        function validateForm() {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirm_password").value;
+            var errorMessage = document.getElementById("errorMessage");
+
+            // Clear previous error message
+            errorMessage.textContent = "";
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                errorMessage.textContent = "Hasła się nie zgadzają!";
+                return false;
+            }
+
+            // If everything is correct, the form is submitted
+            return true;
+        }
+    </script>
+</body>
+</html>
