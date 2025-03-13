@@ -113,25 +113,25 @@
 
         // Funkcja do obsługi płatności
         async function pay() {
-            const selected = document.querySelector('input[name="payment"]:checked');
-            if (!selected || selected.id !== 'stripe') {
-                alert("Wybierz metodę płatności Stripe!");
-                return;
-            }
+    const selected = document.querySelector('input[name="payment"]:checked');
+    if (!selected || selected.id !== 'stripe') {
+        alert("Wybierz metodę płatności Stripe!");
+        return;
+    }
 
-            // Wysyłanie zapytania do API (musisz mieć backend na Vercel lub lokalnie)
-            const response = await fetch('https://acc-sell.vercel.app/api/create-checkout-session', {  // Zmieniony URL do Vercel
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ product: product })  // Przekazanie wybranego produktu
-            });
+    // Wysyłanie zapytania do API na Vercel
+    const response = await fetch('https://acc-sell.vercel.app/api/create-checkout-session', {  // Zmieniony URL do Vercel
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: product })  // Przekazanie wybranego produktu
+    });
 
-            // Oczekiwanie na odpowiedź z backendu
-            const session = await response.json();
+    // Oczekiwanie na odpowiedź z backendu
+    const session = await response.json();
 
-            // Przekierowanie do checkoutu Stripe
-            await stripe.redirectToCheckout({ sessionId: session.id });
-        }
+    // Przekierowanie do checkoutu Stripe
+    await stripe.redirectToCheckout({ sessionId: session.id });
+}
     </script>
 </body>
 </html>
