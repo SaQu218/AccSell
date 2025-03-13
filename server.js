@@ -26,12 +26,13 @@ app.use(cookieParser());
 
 // Konfiguracja sesji
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'twojSuperSekretnyKlucz', // Wartość sesji z env lub domyślna
+    secret: process.env.SESSION_SECRET || 'twojSuperSekretnyKlucz',
     resave: false,
     saveUninitialized: false,
-    cookie: { 
-        secure: process.env.NODE_ENV === 'production', // secure: true w produkcji
-        httpOnly: true,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production', // Ustawienie secure na true tylko w produkcji
+        httpOnly: true,  // Zabezpiecza ciasteczka przed dostępem z JS
+        maxAge: 24 * 60 * 60 * 1000  // Opcjonalnie ustaw datę wygaśnięcia ciasteczka na 1 dzień
     }
 }));
 
@@ -105,25 +106,27 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ message: 'Nieprawidłowe hasło' });
     }
 
+    // Ustawienie sesji
     req.session.user = {
         id: user._id,
         username: user.username,
         email: user.email
     };
 
-    console.log('Zalogowany użytkownik:', req.session.user);  // Sprawdź, czy sesja działa
+    console.log('Zalogowany użytkownik:', req.session.user);  // Sprawdź, czy sesja została prawidłowo ustawiona
 
     res.status(200).json({ message: 'Zalogowano pomyślnie' });
+    res.redirect('/welcome');
 });
 
 // Sprawdzanie, czy użytkownik jest zalogowany
-app.get('/is_logged_in', (req, res) => {
+function isLoggedIn(req, res, next) {
     if (req.session.user) {
-        return res.json({ loggedIn: true, user: req.session.user });
+        return next();  // Kontynuuj, jeśli użytkownik jest zalogowany
     }
-    res.json({ loggedIn: false });
-});
-
+    console.log('Brak sesji użytkownika, przekierowanie na index.html');
+    res.redirect('/index');  // Przekierowanie na stronę logowania, jeśli użytkownik nie jest zalogowany
+}
 // Wylogowanie
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {

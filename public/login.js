@@ -21,10 +21,7 @@ async function loginUser(event) {
         console.log(result);  // Sprawdzamy odpowiedź
 
         if (response.ok) {
-            // Zapisujemy token JWT w ciasteczkach (jeśli chcesz to zrobić)
-            document.cookie = `token=${result.token}; path=/; secure; HttpOnly;`;
-
-            // Przekierowanie na stronę powitalną
+            // Po pomyślnym zalogowaniu przekierowanie na welcome.html
             window.location.href = '/welcome';
         } else {
             document.getElementById('message').innerText = result.message;
