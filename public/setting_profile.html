@@ -157,21 +157,21 @@
   </div>
 
   <script>
-   async function loadProfile() {
-  const response = await fetch('/is_logged_in');
-  const data = await response.json();
+    async function loadProfile() {
+      const response = await fetch('/is_logged_in');
+      const data = await response.json();
 
-  console.log(data);  // Sprawdź odpowiedź z serwera
-  if (data.loggedIn) {
-    const user = data.user;
-    document.getElementById('profileUsernameDisplay').textContent = user.username;
-    document.getElementById('profileEmailDisplay').textContent = user.email;
-  } else {
-    alert('Nie jesteś zalogowany!');
-    window.location.href = "index.html";  // Zwróć uwagę na przekierowanie
-  }
+      console.log(data);  // Sprawdź odpowiedź z serwera
+      if (data.loggedIn) {
+        const user = data.user;
+        document.getElementById('profileUsernameDisplay').textContent = user.username;
+        document.getElementById('profileEmailDisplay').textContent = user.email;
+      } else {
+        alert('Nie jesteś zalogowany!');
+        window.location.href = "index.html";  // Zwróć uwagę na przekierowanie
+      }
+    }
 
-window.onload = loadProfile;  // Ładowanie danych użytkownika po załadowaniu strony
     // Funkcja do przełączania trybu edycji
     function toggleEdit() {
       const usernameInput = document.getElementById('profileUsernameInput');
@@ -226,6 +226,9 @@ window.onload = loadProfile;  // Ładowanie danych użytkownika po załadowaniu 
           window.location.href = "index.html";  // Zmieniono przekierowanie na index.html po wylogowaniu
         });
     }
+
+    // Ładowanie profilu po załadowaniu strony
+    window.onload = loadProfile;
   </script>
 </body>
 </html>
