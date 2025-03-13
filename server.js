@@ -11,9 +11,13 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 // Obsługa plików statycznych (HTML, CSS, JS)
-app.use(express.static(__dirname));  // Serwowanie plików w bieżącym katalogu
+app.use(express.static(path.join(__dirname, 'public')));  // Upewnij się, że pliki HTML są w folderze 'public'
 
-app.use(cors());
+app.use(cors({
+    origin: "*", // Zmodyfikuj na specyficzną domenę produkcyjną (np. Vercel)
+    credentials: true,
+}));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -24,7 +28,8 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        secure: process.env.NODE_ENV === 'production' // secure: true w produkcji
+        secure: process.env.NODE_ENV === 'production', // secure: true w produkcji
+        httpOnly: true,
     }
 }));
 
@@ -51,7 +56,7 @@ const userSchema = new mongoose.Schema({
 const Users = mongoose.model('Dane', userSchema);
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html')); // Główna strona logowania
+    res.sendFile(path.join(__dirname, 'public', 'index.html')); // Główna strona logowania
 });
 
 app.post('/register', async (req, res) => {
@@ -137,40 +142,41 @@ function isLoggedIn(req, res, next) {
 
 // Strony powitalne, home, settings itp.
 app.get('/welcome', isLoggedIn, (req, res) => {
-    res.sendFile(path.join(__dirname, 'welcome.html'));  // Strona powitalna
+    res.sendFile(path.join(__dirname, 'public', 'welcome.html'));  // Strona powitalna
 });
 
 app.get('/home', isLoggedIn, (req, res) => {
-    res.sendFile(path.join(__dirname, 'home.html'));  // Strona główna
+    res.sendFile(path.join(__dirname, 'public', 'home.html'));  // Strona główna
 });
 
 app.get('/setting_profile', isLoggedIn, (req, res) => {
-    res.sendFile(path.join(__dirname, 'setting_profile.html'));  // Ustawienia profilu
+    res.sendFile(path.join(__dirname, 'public', 'setting_profile.html'));  // Ustawienia profilu
 });
 
 // Strona logowania
 app.get('/index', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));  // Strona logowania
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));  // Strona logowania
 });
 
 app.get('/konto_fb', (req, res) => {
-    res.sendFile(path.join(__dirname, 'konto_fb.html'));  // Strona logowania
+    res.sendFile(path.join(__dirname, 'public', 'konto_fb.html'));  // Strona logowania
 });
 
 app.get('/konto_ig', (req, res) => {
-    res.sendFile(path.join(__dirname, 'konto_ig.html'));  // Strona logowania
+    res.sendFile(path.join(__dirname, 'public', 'konto_ig.html'));  // Strona logowania
 });
 
 app.get('/konto_steam', (req, res) => {
-    res.sendFile(path.join(__dirname, 'konto_steam.html'));  // Strona logowania
+    res.sendFile(path.join(__dirname, 'public', 'konto_steam.html'));  // Strona logowania
 });
 
 app.get('/kup', (req, res) => {
-    res.sendFile(path.join(__dirname, 'kup.html'));  // Strona logowania
+    res.sendFile(path.join(__dirname, 'public', 'kup.html'));  // Strona logowania
 });
+
 // Strona rejestracji
 app.get('/register', (req, res) => {
-    res.sendFile(path.join(__dirname, 'register.html'));  // Strona rejestracji
+    res.sendFile(path.join(__dirname, 'public', 'register.html'));  // Strona rejestracji
 });
 
 // Ustawienia profilu
