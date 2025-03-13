@@ -7,7 +7,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Twój klucz tajny Stripe
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
@@ -36,6 +36,37 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000  // Czas życia ciasteczka: 1 dzień
     }
 }));
+app.post('/api/create-checkout-session', async (req, res) => {
+    const { product } = req.body;  // Otrzymujesz nazwę produktu, np. "Facebook 2009"
+    
+    try {
+        // Tworzenie sesji Stripe Checkout
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'pln', // Waluta
+                        product_data: {
+                            name: product, // Nazwa produktu
+                        },
+                        unit_amount: 4000, // Cena w groszach (4000 groszy = 40 zł)
+                    },
+                    quantity: 1, // Ilość produktu
+                },
+            ],
+            mode: 'payment', // Typ sesji (płatność)
+            success_url: `${process.env.BASE_URL}/success.html`,  // URL, gdzie użytkownik trafia po pomyślnym zakończeniu transakcji
+            cancel_url: `${process.env.BASE_URL}/cancel.html`,    // URL, gdzie użytkownik trafia po anulowaniu transakcji
+        });
+
+        // Zwracamy ID sesji Stripe
+        res.status(200).json({ id: session.id });
+    } catch (error) {
+        console.error('Błąd podczas tworzenia sesji Stripe:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 const port = process.env.PORT || 3020;
 
@@ -173,6 +204,14 @@ app.get('/konto_fb.html', isLoggedIn, (req, res) => {
 
 app.get('/konto_ig.html', isLoggedIn, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_ig.html'));  // Strona logowania
+});
+
+app.get('/success.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'success.html')); // Strona sukcesu po płatności
+});
+
+app.get('/cancel.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'cancel.html')); // Strona anulowania płatności
 });
 
 app.get('/konto_steam.html', isLoggedIn, (req, res) => {

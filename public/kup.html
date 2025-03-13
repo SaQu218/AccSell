@@ -90,26 +90,29 @@
 
     <script>
         async function buyProduct(product) {
-            // Wyślij zapytanie do API, aby utworzyć sesję Stripe
-            const response = await fetch('/api/create-checkout-session', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ product: product })
-            });
+    // Wyślij zapytanie do API, aby utworzyć sesję Stripe
+    const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ product: product })
+    });
 
-            if (response.ok) {
-                const data = await response.json();
-                const stripeSessionId = data.id;
+    if (response.ok) {
+        const data = await response.json();
+        const stripeSessionId = data.id;
 
-                // Przekieruj użytkownika do Stripe Checkout
-                const stripe = Stripe('pk_test_51R2HeHDFinv4XW4HiOmJ9xDiLsit5j9GS31hAgOZk7II5KlzaSFW1hnB2U0NWcnjNzwZHtwSXzbPgvIjCqATN9SE00RjiI8n5r'); // Twój publiczny klucz Stripe
-                stripe.redirectToCheckout({ sessionId: stripeSessionId });
-            } else {
-                alert('Błąd podczas tworzenia sesji płatności. Spróbuj ponownie.');
-            }
-        }
+        // Przekieruj użytkownika do Stripe Checkout
+        const stripe = Stripe('pk_test_51R2HeHDFinv4XW4HiOmJ9xDiLsit5j9GS31hAgOZk7II5KlzaSFW1hnB2U0NWcnjNzwZHtwSXzbPgvIjCqATN9SE00RjiI8n5r'); // Twój publiczny klucz Stripe
+        stripe.redirectToCheckout({ sessionId: stripeSessionId });
+    } else {
+        // Loguj pełną odpowiedź, aby sprawdzić, co się stało
+        const errorData = await response.json();
+        console.error('Błąd podczas tworzenia sesji płatności:', errorData);
+        alert('Błąd podczas tworzenia sesji płatności. Sprawdź konsolę, aby uzyskać więcej informacji.');
+    }
+}
     </script>
 
 </body>
