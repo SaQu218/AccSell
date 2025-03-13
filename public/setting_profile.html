@@ -157,26 +157,25 @@
   </div>
 
   <script>
-    // Funkcja do ładowania danych użytkownika
-    async function loadProfile() {
-      const response = await fetch('/is_logged_in');
-      const data = await response.json();
+   async function loadProfile() {
+  const response = await fetch('/is_logged_in');  // Zapytanie o status logowania użytkownika
+  const data = await response.json();
 
-      if (data.loggedIn) {
-        const user = data.user;
-        document.getElementById('profileUsernameDisplay').textContent = user.username;
-        document.getElementById('profilePasswordDisplay').textContent = "********";  // Hasło nie jest pokazane
-        document.getElementById('profileEmailDisplay').textContent = user.email;
-        document.getElementById('profileUsernameInput').value = user.username;
-        document.getElementById('profileEmailInput').value = user.email;
-      } else {
-        alert('Nie jesteś zalogowany!');
-        window.location.href = "index.html";
-      }
-    }
+  if (data.loggedIn) {  // Jeśli użytkownik jest zalogowany
+    const user = data.user;
+    // Wyświetlanie danych użytkownika na stronie
+    document.getElementById('profileUsernameDisplay').textContent = user.username;
+    document.getElementById('profilePasswordDisplay').textContent = "********";  // Hasło nie jest wyświetlane
+    document.getElementById('profileEmailDisplay').textContent = user.email;
+    document.getElementById('profileUsernameInput').value = user.username;
+    document.getElementById('profileEmailInput').value = user.email;
+  } else {
+    alert('Nie jesteś zalogowany!');
+    window.location.href = "index.html";  // Jeśli użytkownik nie jest zalogowany, przekierowanie na stronę logowania
+  }
+}
 
-    window.onload = loadProfile;  // Załaduj dane po załadowaniu strony
-
+window.onload = loadProfile;  // Ładowanie danych użytkownika po załadowaniu strony
     // Funkcja do przełączania trybu edycji
     function toggleEdit() {
       const usernameInput = document.getElementById('profileUsernameInput');
