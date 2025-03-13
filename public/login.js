@@ -6,7 +6,6 @@ async function loginUser(event) {
     const password = document.getElementById('password').value;
 
     try {
-        // Wysyłamy dane logowania do backendu (serwera)
         const response = await fetch('/login', {
             method: 'POST',
             headers: {
@@ -22,15 +21,16 @@ async function loginUser(event) {
         console.log(result);  // Sprawdzamy odpowiedź
 
         if (response.ok) {
-            // Jeśli dane są poprawne, przekierowujemy na welcome.html
-            window.location.href = '/welcome.html';  // Zmienione z '/welcome' na '/welcome.html'
+            // Po pomyślnym zalogowaniu zapisz dane w localStorage
+            localStorage.setItem('user', JSON.stringify(result.user));  // Możesz przechować np. ID użytkownika lub token
+
+            // Przekierowanie na stronę welcome.html
+            window.location.href = '/welcome.html'; 
         } else {
-            // Wyświetlamy komunikat o błędzie, jeśli logowanie się nie powiodło
             document.getElementById('message').innerText = result.message;
         }
     } catch (error) {
         console.error('Błąd podczas logowania:', error);
-        // Jeśli wystąpi błąd po stronie serwera
         document.getElementById('message').innerText = 'Wystąpił błąd, spróbuj ponownie.';
     }
 }
