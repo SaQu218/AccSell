@@ -7,6 +7,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
@@ -57,6 +58,36 @@ const userSchema = new mongoose.Schema({
 });
 
 const Users = mongoose.model('Dane', userSchema);
+//stripe
+app.post('/create-checkout-session', async (req, res) => {
+    try {
+        const { product, price } = req.body; // Dane z frontend (np. konto Facebook 2009, cena 40 zł)
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            mode: 'payment',
+            success_url: 'https://acc-sell.vercel.app/success.html',
+            cancel_url: 'https://acc-sell.vercel.app/cancel.html',
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'pln',
+                        product_data: {
+                            name: product,
+                        },
+                        unit_amount: price * 100, // Stripe wymaga kwoty w groszach
+                    },
+                    quantity: 1,
+                },
+            ],
+        });
+
+        res.json({ url: session.url });
+    } catch (error) {
+        console.error('Błąd przy tworzeniu sesji Stripe:', error);
+        res.status(500).json({ message: 'Błąd serwera' });
+    }
+});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html')); // Główna strona logowania
