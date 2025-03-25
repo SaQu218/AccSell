@@ -3,36 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ustawienia profilu</title>
+    <title>Ustawienia Profilu</title>
+    <style>
+        body {
+            background-color: #100f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-bar {
+            background-color: #1a1a1a;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .home-button {
+            background: #4a90e2;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        .home-button:hover {
+            background: #357abd;
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #252525;
+            border-radius: 5px;
+        }
+
+        .profile-info h2 {
+            color: #4a90e2;
+            margin-bottom: 20px;
+        }
+
+        .profile-field {
+            margin-bottom: 15px;
+        }
+
+        .profile-field label {
+            display: block;
+            margin-bottom: 5px;
+            color: #4a90e2;
+        }
+
+        .profile-field input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #4a90e2;
+            border-radius: 4px;
+            background-color: #333;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .update-button {
+            background-color: #4a90e2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .update-button:hover {
+            background-color: #357abd;
+        }
+
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .error {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <div id="profileInfo">
-        <!-- Tu będą wyświetlane dane użytkownika -->
+    <div class="top-bar">
+        <a href="home.html" class="home-button">Strona Główna</a>
     </div>
-    <div id="loginMessage" style="color: red; display: none;">
-        Jesteś niezalogowany! Proszę zalogować się, aby zobaczyć ustawienia.
+
+    <div class="profile-container">
+        <div class="profile-info">
+            <h2>Twoje dane</h2>
+            <div class="profile-field">
+                <label>Nazwa użytkownika:</label>
+                <input type="text" id="username" placeholder="Ładowanie...">
+            </div>
+            <div class="profile-field">
+                <label>Email:</label>
+                <input type="email" id="email" placeholder="Ładowanie...">
+            </div>
+            <div class="profile-field">
+                <label>Nowe hasło:</label>
+                <input type="password" id="password" placeholder="Wprowadź nowe hasło">
+            </div>
+            <button class="update-button" onclick="updateProfile()">Zaktualizuj dane</button>
+            <div id="message" class="message" style="display: none;"></div>
+        </div>
     </div>
 
     <script>
-        // Funkcja sprawdzająca, czy użytkownik jest zalogowany
-        function checkLogin() {
-            const user = localStorage.getItem('user');  // Pobieramy dane użytkownika z localStorage
+        // Pobierz dane użytkownika przy ładowaniu strony
+        window.onload = async function() {
+            try {
+                const response = await fetch('/is_logged_in');
+                const data = await response.json();
+                
+                if (data.loggedIn) {
+                    document.getElementById('username').value = data.user.username;
+                    document.getElementById('email').value = data.user.email;
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+                showMessage('Błąd podczas pobierania danych', false);
+            }
+        };
 
-            if (user) {
-                // Jeśli użytkownik jest zalogowany, pokazujemy dane
-                document.getElementById('profileInfo').innerHTML = `
-                    <h1>Witaj, ${JSON.parse(user).username}!</h1>
-                    <p>Twój e-mail: ${JSON.parse(user).email}</p>
-                    <!-- Możesz dodać więcej danych użytkownika -->
-                `;
-            } else {
-                // Jeśli użytkownik nie jest zalogowany, wyświetlamy komunikat o błędzie
-                document.getElementById('loginMessage').style.display = 'block';
+        // Funkcja do aktualizacji profilu
+        async function updateProfile() {
+            const newUsername = document.getElementById('username').value;
+            const newEmail = document.getElementById('email').value;
+            const newPassword = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/update_profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        newUsername,
+                        newEmail,
+                        newPassword: newPassword || undefined
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('Dane zostały zaktualizowane pomyślnie', true);
+                    // Wyczyść pole hasła po udanej aktualizacji
+                    document.getElementById('password').value = '';
+                } else {
+                    showMessage(data.message || 'Wystąpił błąd podczas aktualizacji', false);
+                }
+            } catch (error) {
+                console.error('Błąd podczas aktualizacji:', error);
+                showMessage('Wystąpił błąd podczas aktualizacji', false);
             }
         }
 
-        // Sprawdzamy, czy użytkownik jest zalogowany
-        checkLogin();
+        // Funkcja do wyświetlania komunikatów
+        function showMessage(message, isSuccess) {
+            const messageElement = document.getElementById('message');
+            messageElement.textContent = message;
+            messageElement.className = `message ${isSuccess ? 'success' : 'error'}`;
+            messageElement.style.display = 'block';
+
+            // Ukryj komunikat po 3 sekundach
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
     </script>
 </body>
 </html>
