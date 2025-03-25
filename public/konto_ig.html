@@ -141,6 +141,32 @@
         .account-box2 .buy-button:hover {
             background-color: #e6b800;
         }
+
+        .button-container {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 20px;
+        }
+
+        .cart-button {
+            background-color: #28a745;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .cart-button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
@@ -157,13 +183,23 @@
             <i class="fa-brands fa-instagram"></i>
             <p><strong>Konto Instagram: 50k Follow</strong></p>
             <p>Cena: <strong>40 zł</strong></p>
-            <a href="kup.html?product=Konto%20Instagram%2050k%20Follow" class="buy-button">Kup</a>
+            <div class="button-container">
+                <a href="kup.html?product=Konto%20Instagram%2050k%20Follow" class="buy-button">Kup</a>
+                <button onclick="addToCart('Konto Instagram 50k Follow', 40)" class="cart-button">
+                    Dodaj do koszyka
+                </button>
+            </div>
         </div>
         <div class="account-box2">
             <i class="fa-brands fa-instagram"></i>
             <p><strong>Konto Instagram: 195K Follow</strong></p>
             <p>Cena: <strong>180 zł</strong></p>
-            <a href="kup.html?product=Konto%20Instagram%20195K%20Follow" class="buy-button">Kup</a>
+            <div class="button-container">
+                <a href="kup.html?product=Konto%20Instagram%20195K%20Follow" class="buy-button">Kup</a>
+                <button onclick="addToCart('Konto Instagram 195K Follow', 180)" class="cart-button">
+                    Dodaj do koszyka
+                </button>
+            </div>
         </div>
     </div>
 
