@@ -47,12 +47,13 @@
         .account-box, .account-box2, .account-box3 {
             background-color: #1a1a1a;
             border: 1px solid #4a90e2;
-            border-radius: 15px;
+            border-radius: 10px;
             padding: 20px;
             margin: 20px;
-            width: 250px;
+            width: 280px;
             position: relative;
-            padding-bottom: 100px;
+            padding-bottom: 110px;
+            display: inline-block;
         }
 
         .account-box i {
@@ -98,21 +99,22 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 0 15px;
+            gap: 5px;
+            padding: 0 20px;
         }
 
         .buy-button, .cart-button {
-            width: 90%;
+            width: 100%;
             font-size: 16px;
-            padding: 12px 20px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 25px;
+            border-radius: 5px;
             text-decoration: none;
             cursor: pointer;
             transition: background 0.3s ease;
             text-align: center;
-            font-weight: bold;
+            font-weight: normal;
+            margin: 0;
         }
 
         .buy-button {
@@ -120,13 +122,13 @@
             color: black;
         }
 
-        .buy-button:hover {
-            background-color: #e6b800;
-        }
-
         .cart-button {
             background-color: #28a745;
             color: white;
+        }
+
+        .buy-button:hover {
+            background-color: #e6b800;
         }
 
         .cart-button:hover {
