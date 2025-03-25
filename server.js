@@ -237,8 +237,9 @@ const verifyToken = (req, res, next) => {
 
 // Endpoint sprawdzania zalogowania
 app.get('/is_logged_in', (req, res) => {
-    // Sprawdź czy sesja istnieje i czy zawiera dane użytkownika
-    if (req.session && req.session.user && req.session.user.id) {
+    console.log('Sprawdzanie sesji:', req.session); // dodajemy log
+    if (req.session && req.session.user) {
+        console.log('Zalogowany użytkownik:', req.session.user);
         res.json({ 
             loggedIn: true, 
             user: {
@@ -247,6 +248,7 @@ app.get('/is_logged_in', (req, res) => {
             } 
         });
     } else {
+        console.log('Brak aktywnej sesji');
         res.json({ loggedIn: false });
     }
 });
