@@ -140,7 +140,6 @@
     <script>
         window.onload = async function() {
             try {
-                console.log('Sprawdzanie statusu logowania...');
                 const response = await fetch('/is_logged_in', {
                     method: 'GET',
                     credentials: 'include',
@@ -149,31 +148,21 @@
                     }
                 });
                 
-                console.log('Status odpowiedzi:', response.status);
                 const data = await response.json();
-                console.log('Otrzymane dane:', data);
                 
                 if (data.loggedIn && data.user) {
-                    console.log('Użytkownik zalogowany:', data.user);
                     document.getElementById('username').value = data.user.username || '';
                     document.getElementById('email').value = data.user.email || '';
                 } else {
-                    console.log('Użytkownik nie jest zalogowany');
-                    window.location.href = 'index.html';
+                    showMessage('Nie udało się załadować danych użytkownika', false);
                 }
             } catch (error) {
-                console.error('Szczegóły błędu:', error);
-                window.location.href = 'index.html';
+                console.error('Błąd podczas pobierania danych:', error);
+                showMessage('Wystąpił błąd podczas ładowania danych', false);
             }
         };
 
         async function updateProfile() {
-            const token = localStorage.getItem('userToken');
-            if (!token) {
-                window.location.href = 'index.html';
-                return;
-            }
-
             const newUsername = document.getElementById('username').value;
             const newEmail = document.getElementById('email').value;
             const newPassword = document.getElementById('password').value;
@@ -181,8 +170,8 @@
             try {
                 const response = await fetch('/update_profile', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
@@ -206,7 +195,6 @@
             }
         }
 
-        // Funkcja do wyświetlania komunikatów
         function showMessage(message, isSuccess) {
             const messageElement = document.getElementById('message');
             messageElement.textContent = message;
