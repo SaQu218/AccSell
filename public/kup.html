@@ -21,7 +21,7 @@
             text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-        .home-button, .pay-button {
+        .home-button {
             background: #4a90e2;
             padding: 10px 20px;
             border: none;
@@ -31,22 +31,16 @@
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
-            margin-top: 20px;
             transition: background 0.3s;
+            margin-top: 10px;
         }
-        .home-button:hover, .pay-button:hover {
+        .home-button:hover {
             background: #357abd;
         }
         .content {
             padding: 50px;
         }
-        .purchase-info {
-            margin-top: 30px;
-            font-size: 18px;
-            color: #4a90e2;
-            font-weight: bold;
-        }
-        .payment-option {
+        .account-box {
             background-color: #1a1a1a;
             border: 2px solid #4a90e2;
             border-radius: 10px;
@@ -54,23 +48,45 @@
             display: inline-block;
             text-align: center;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            margin: 20px;
-            width: 200px;
+            margin-top: 20px;
+            width: 300px;
+            position: relative;
+            padding-bottom: 60px;
+        }
+        .account-box i {
+            font-size: 30px;
+            color: #4a90e2;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .account-box p {
+            font-size: 18px;
+            margin: 5px 0;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .account-box .buy-button {
+            background-color: #ffd700;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             cursor: pointer;
-            transition: 0.3s;
+            transition: background 0.3s ease;
         }
-        .payment-option:hover, .selected {
-            background-color: #252525;
-        }
-        .options-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
+        .account-box .buy-button:hover {
+            background-color: #e6b800;
         }
     </style>
 </head>
 <body>
-
     <div class="top-bar">
         <a href="home.html" class="home-button">Strona Główna</a>
     </div>
@@ -85,17 +101,14 @@
             <p>Cena: <strong id="product-price">Ładowanie...</strong></p>
             <button class="buy-button" onclick="buyProduct()">Kup</button>
         </div>
-        <!-- Inne produkty -->
     </div>
 
     <script>
-        // Funkcja do pobierania parametrów z URL
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
-        // Funkcja do ustawiania ceny na podstawie produktu
         function setProductDetails() {
             const product = getQueryParam('product');
             if (!product) {
@@ -112,7 +125,6 @@
             document.getElementById('product-price').innerHTML = `<strong>${prices[product]} zł</strong>`;
         }
 
-        // Wywołaj funkcję przy załadowaniu strony
         window.onload = setProductDetails;
 
         async function buyProduct() {
@@ -122,7 +134,6 @@
                 return;
             }
 
-            // Wyślij zapytanie do API, aby utworzyć sesję Stripe
             const response = await fetch('/api/create-checkout-session', {
                 method: 'POST',
                 headers: {
@@ -134,8 +145,6 @@
             if (response.ok) {
                 const data = await response.json();
                 const stripeSessionId = data.id;
-
-                // Przekieruj użytkownika do Stripe Checkout
                 const stripe = Stripe('pk_test_51R2HeHDFinv4XW4HiOmJ9xDiLsit5j9GS31hAgOZk7II5KlzaSFW1hnB2U0NWcnjNzwZHtwSXzbPgvIjCqATN9SE00RjiI8n5r');
                 stripe.redirectToCheckout({ sessionId: stripeSessionId });
             } else {
@@ -145,6 +154,5 @@
             }
         }
     </script>
-
 </body>
 </html>
