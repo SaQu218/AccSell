@@ -43,7 +43,12 @@ app.post('/api/create-checkout-session', async (req, res) => {
     // Słownik cen dla różnych produktów
     const prices = {
         'Konto Facebook 2009': 4000, // 40 zł w groszach
-        'Konto Facebook 2012': 4500  // 45 zł w groszach
+        'Konto Facebook 2012': 4500, // 45 zł w groszach
+        'Konto Instagram 50k Follow': 4000, // 40 zł w groszach
+        'Konto Instagram 195K Follow': 18000, // 180 zł w groszach
+        'Konto Steam 2009': 12000, // 120 zł w groszach
+        'Konto Steam 2019': 5000, // 50 zł w groszach
+        'Konto Steam 2023 prime cs2': 9000 // 90 zł w groszach
     };
 
     const price = prices[product];
@@ -52,7 +57,6 @@ app.post('/api/create-checkout-session', async (req, res) => {
     }
     
     try {
-        // Tworzenie sesji Stripe Checkout
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [
