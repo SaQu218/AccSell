@@ -8,7 +8,7 @@
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,7 +22,7 @@
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            width: 100%;
+            width: 90%;
             max-width: 400px;
             backdrop-filter: blur(5px);
         }
@@ -47,12 +47,13 @@
 
         .form-group input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #333333;
             border-radius: 5px;
             background: #1f1f1f;
             color: #ffffff;
             font-size: 16px;
+            box-sizing: border-box;
         }
 
         .form-group input:focus {
@@ -96,6 +97,41 @@
             font-size: 14px;
             text-align: center;
             margin-top: 10px;
+            background-color: rgba(255, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid red;
+        }
+
+        @media screen and (max-width: 480px) {
+            .register-container {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .register-container h2 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .form-group input {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .register-button {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .login-link {
+                font-size: 13px;
+            }
+
+            .error-message {
+                font-size: 13px;
+                padding: 8px;
+            }
         }
     </style>
 </head>
