@@ -17,9 +17,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));  // Upewnij się, że pliki HTML są w folderze 'public'
 
 app.use(cors({
-    origin: 'https://acc-sell.vercel.app',  // Możesz to zmienić na konkretną domenę
+    origin: ['https://acc-sell.vercel.app', 'http://localhost:3020'], // dodaj oba adresy
     methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
+    credentials: true, // dodaj to
+    allowedHeaders: ['Content-Type']
 }));
 
 app.use(express.urlencoded({ extended: true }));
@@ -32,10 +33,12 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     cookie: {
-        secure: false,
+        secure: process.env.NODE_ENV === 'production', // true w produkcji
         httpOnly: true,
+        sameSite: 'none', // dodaj to
         maxAge: 24 * 60 * 60 * 1000
-    }
+    },
+    proxy: true // dodaj to dla Vercel
 }));
 app.post('/api/create-checkout-session', async (req, res) => {
     const { product } = req.body;
