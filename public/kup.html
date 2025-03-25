@@ -118,11 +118,25 @@
 
             const prices = {
                 'Konto Facebook 2009': 40,
-                'Konto Facebook 2012': 45
+                'Konto Facebook 2012': 45,
+                'Konto Instagram 50k Follow': 40,
+                'Konto Instagram 195K Follow': 180,
+                'Konto Steam 2009': 120,
+                'Konto Steam 2019': 50,
+                'Konto Steam 2023 prime cs2': 90
             };
 
             document.getElementById('product-name').innerHTML = `<strong>${product}</strong>`;
             document.getElementById('product-price').innerHTML = `<strong>${prices[product]} zł</strong>`;
+
+            // Ustawienie odpowiedniej ikony w zależności od typu produktu
+            let iconClass = 'fa-facebook';
+            if (product.includes('Instagram')) {
+                iconClass = 'fa-instagram';
+            } else if (product.includes('Steam')) {
+                iconClass = 'fa-steam';
+            }
+            document.querySelector('.account-box i').className = `fa-brands ${iconClass}`;
         }
 
         window.onload = setProductDetails;
