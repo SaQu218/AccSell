@@ -55,7 +55,7 @@
             margin-top: 20px;
             width: 300px;
             position: relative;
-            padding-bottom: 60px;
+            padding-bottom: 120px;
         }
 
         .account-box i {
@@ -105,7 +105,7 @@
             margin-top: 20px;
             width: 300px;
             position: relative;
-            padding-bottom: 60px;
+            padding-bottom: 120px;
         }
 
         .account-box2 i, .account-box3 i {
@@ -149,11 +149,29 @@
             left: 0;
             right: 0;
             display: flex;
-            justify-content: space-around;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
             padding: 0 20px;
         }
 
+        .buy-button {
+            width: 80%;
+            background-color: #ffd700;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: static;
+            transform: none;
+        }
+
         .cart-button {
+            width: 80%;
             background-color: #28a745;
             color: white;
             font-size: 18px;
@@ -163,10 +181,6 @@
             text-decoration: none;
             cursor: pointer;
             transition: background 0.3s ease;
-        }
-
-        .cart-button:hover {
-            background-color: #218838;
         }
     </style>
 </head>
