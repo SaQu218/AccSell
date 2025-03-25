@@ -104,7 +104,7 @@
         }
 
         .account-box, .account-box2, .account-box3 {
-            padding-bottom: 80px;
+            padding-bottom: 100px;
         }
 
         .button-container {
@@ -113,16 +113,14 @@
             left: 0;
             right: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             gap: 10px;
             padding: 0 20px;
         }
 
         .buy-button, .cart-button {
-            flex: 1;
-            max-width: 45%;
-            background-color: #ffd700;
-            color: white;
+            width: 80%;
             font-size: 16px;
             padding: 10px 15px;
             border: none;
@@ -130,8 +128,12 @@
             text-decoration: none;
             cursor: pointer;
             transition: background 0.3s ease;
-            position: static;
-            transform: none;
+            color: white;
+            text-align: center;
+        }
+
+        .buy-button {
+            background-color: #ffd700;
         }
 
         .buy-button:hover {
