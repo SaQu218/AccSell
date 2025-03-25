@@ -7,265 +7,218 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
-    background-color: #100f0f;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 0;
-    margin: 0;
-}
+            background-color: #100f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
 
-.top-bar {
-    background-color: #1a1a1a; 
-    padding: 15px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
+        .top-bar {
+            background-color: #1a1a1a; 
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-.home-button {
-    background: #4a90e2;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: background 0.3s;
-    margin-top: 10px;
-}
+        .home-button {
+            background: #4a90e2;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
 
-.home-button:hover {
-    background: #357abd;
-}
+        .home-button:hover {
+            background: #357abd;
+        }
 
-.content {
-    padding: 50px;
-}
+        .content {
+            padding: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-.account-box {
-    background-color: #1a1a1a;
-    border: 1px solid #4a90e2;
-    border-radius: 10px;
-    padding: 30px;
-    margin: 20px;
-    width: 300px;
-    position: relative;
-    padding-bottom: 160px;
-    display: inline-block;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+        .account-box {
+            background-color: #1a1a1a;
+            border: 1px solid #4a90e2;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px;
+            width: 300px;
+            position: relative;
+            padding-bottom: 160px;
+            display: inline-block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
 
-.account-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
-}
+        .account-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
 
-.account-box i {
-    font-size: 30px;
-    color: #4a90e2;
-    margin-right: 10px;
-    vertical-align: middle;
-}
+        .account-box i {
+            font-size: 30px;
+            color: #4a90e2;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
 
-.account-box p {
-    font-size: 18px;
-    margin: 5px 0;
-    display: block;
-    text-align: center;
-}
+        .account-box p {
+            font-size: 18px;
+            margin: 5px 0;
+            display: block;
+            text-align: center;
+        }
 
-.price {
-    font-size: 24px;
-    font-weight: bold;
-    color: #ffd700;
-    margin: 15px 0;
-    display: block;
-}
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+            margin: 15px 0;
+            display: block;
+        }
 
-.button-container {
-    position: absolute;
-    bottom: 30px;
-    left: 0;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 0 30px;
-}
+        .button-container {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 0 30px;
+        }
 
-.buy-button, .cart-button {
-    width: 100%;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-decoration: none;
-}
+        .buy-button, .cart-button {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
 
-.buy-button {
-    background-color: #ffd700;
-    color: #000000;
-}
+        .buy-button {
+            background-color: #ffd700;
+            color: #000000;
+        }
 
-.buy-button:hover {
-    background-color: #ffed4a;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
-}
+        .buy-button:hover {
+            background-color: #ffed4a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+        }
 
-.cart-button {
-    background-color: #28a745;
-    color: white;
-}
+        .cart-button {
+            background-color: #28a745;
+            color: white;
+        }
 
-.cart-button:hover {
-    background-color: #2dbb4e;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
-}
+        .cart-button:hover {
+            background-color: #2dbb4e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
 
-.cart-button i {
-    font-size: 16px;
-}
+        .cart-button i {
+            font-size: 16px;
+        }
 
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #28a745;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    display: none;
-    z-index: 1000;
-    animation: slideIn 0.3s ease-out;
-}
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
 
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
 
-@media screen and (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        padding: 10px;
-    }
+        @media screen and (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
 
-    .navbar button, .dropdown {
-        width: 100%;
-        margin: 5px 0;
-        text-align: center;
-    }
+            .account-box {
+                width: 100%;
+                margin: 10px 0;
+                padding: 15px;
+            }
 
-    .navbar-buttons {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-    }
+            .account-box h2 {
+                font-size: 20px;
+            }
 
-    .menu-button {
-        width: 100%;
-        justify-content: center;
-        margin: 10px 0;
-    }
+            .account-box p {
+                font-size: 14px;
+            }
 
-    .dropdown-content {
-        position: static;
-        width: 100%;
-        display: none;
-        background-color: #333;
-        box-shadow: none;
-        border: none;
-        border-radius: 0;
-    }
+            .buy-button, .cart-button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+        }
 
-    .dropdown-content a {
-        padding: 10px;
-        text-align: center;
-    }
+        @media screen and (max-width: 480px) {
+            .content {
+                padding: 10px;
+            }
 
-    .dropdown:hover .dropdown-content {
-        display: none;
-    }
+            .account-box {
+                padding: 10px;
+            }
 
-    .dropdown.active .dropdown-content {
-        display: block;
-    }
+            .account-box h2 {
+                font-size: 18px;
+            }
 
-    .content {
-        padding: 20px;
-    }
+            .account-box p {
+                font-size: 12px;
+            }
 
-    .account-box {
-        width: 100%;
-        margin: 10px 0;
-        padding: 15px;
-    }
-
-    .account-box h2 {
-        font-size: 20px;
-    }
-
-    .account-box p {
-        font-size: 14px;
-    }
-
-    .buy-button {
-        padding: 8px 16px;
-        font-size: 14px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .navbar button, .dropdown-button {
-        font-size: 14px;
-        padding: 8px 12px;
-    }
-
-    .dropdown-content a {
-        font-size: 14px;
-        padding: 8px;
-    }
-
-    .account-box {
-        padding: 10px;
-    }
-
-    .account-box h2 {
-        font-size: 18px;
-    }
-
-    .account-box p {
-        font-size: 12px;
-    }
-
-    .buy-button {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-}
+            .buy-button, .cart-button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>

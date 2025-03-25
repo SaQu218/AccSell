@@ -35,7 +35,7 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             position: relative;
             flex-wrap: wrap;
@@ -114,21 +114,24 @@
             gap: 10px;
             align-items: center;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .logout-button, .settings-button, .menu-button {
-            padding: 10px 20px;
+            padding: 8px 15px;
             border: none;
             border-radius: 5px;
             color: #ffffff;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             transition: background 0.3s;
             white-space: nowrap;
             display: flex;
             align-items: center;
             gap: 8px;
             text-decoration: none;
+            min-width: 120px;
+            justify-content: center;
         }
 
         .logout-button {
@@ -163,7 +166,7 @@
             }
 
             .navbar button, .dropdown {
-                width: 100%;
+                width: auto;
                 margin: 5px 0;
                 text-align: center;
             }
@@ -177,7 +180,7 @@
             }
 
             .menu-button {
-                width: 100%;
+                width: auto;
                 justify-content: center;
                 margin: 10px 0;
             }
