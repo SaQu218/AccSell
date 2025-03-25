@@ -7,163 +7,248 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
-    background-color: #100f0f;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 0;
-    margin: 0;
-}
+            background-color: #100f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
 
-.top-bar {
-    background-color: #1a1a1a; 
-    padding: 15px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
+        .top-bar {
+            background-color: #1a1a1a; 
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-.home-button {
-    background: #4a90e2;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: background 0.3s;
-    margin-top: 10px;
-}
+        .home-button {
+            background: #4a90e2;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
 
-.home-button:hover {
-    background: #357abd;
-}
+        .home-button:hover {
+            background: #357abd;
+        }
 
-.content {
-    padding: 50px;
-}
+        .content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-.account-box {
-    background-color: #1a1a1a;
-    border: 1px solid #4a90e2;
-    border-radius: 10px;
-    padding: 30px;
-    margin: 20px;
-    width: 300px;
-    position: relative;
-    padding-bottom: 160px;
-    display: inline-block;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+        .content h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
 
-.account-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
-}
+        .content p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
 
-.account-box i {
-    font-size: 30px;
-    color: #4a90e2;
-    margin-right: 10px;
-    vertical-align: middle;
-}
+        .account-box {
+            background-color: #1a1a1a;
+            border: 1px solid #4a90e2;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px;
+            width: 300px;
+            position: relative;
+            padding-bottom: 160px;
+            display: inline-block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
 
-.account-box p {
-    font-size: 18px;
-    margin: 5px 0;
-    display: block;
-    text-align: center;
-}
+        .account-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
 
-.price {
-    font-size: 24px;
-    font-weight: bold;
-    color: #ffd700;
-    margin: 15px 0;
-    display: block;
-}
+        .account-box i {
+            font-size: 30px;
+            color: #4a90e2;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
 
-.button-container {
-    position: absolute;
-    bottom: 30px;
-    left: 0;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding: 0 30px;
-}
+        .account-box p {
+            font-size: 16px;
+            margin: 5px 0;
+            display: block;
+            text-align: center;
+        }
 
-.buy-button, .cart-button {
-    width: 100%;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-decoration: none;
-}
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+            margin: 15px 0;
+            display: block;
+        }
 
-.buy-button {
-    background-color: #ffd700;
-    color: #000000;
-}
+        .button-container {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px;
+        }
 
-.buy-button:hover {
-    background-color: #ffed4a;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
-}
+        .buy-button, .cart-button {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
 
-.cart-button {
-    background-color: #28a745;
-    color: white;
-}
+        .buy-button {
+            background-color: #ffd700;
+            color: #000000;
+        }
 
-.cart-button:hover {
-    background-color: #2dbb4e;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
-}
+        .buy-button:hover {
+            background-color: #ffed4a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+        }
 
-.cart-button i {
-    font-size: 16px;
-}
+        .cart-button {
+            background-color: #28a745;
+            color: white;
+        }
 
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #28a745;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    display: none;
-    z-index: 1000;
-    animation: slideIn 0.3s ease-out;
-}
+        .cart-button:hover {
+            background-color: #2dbb4e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+        }
 
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
+        .cart-button i {
+            font-size: 16px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsywność */
+        @media screen and (max-width: 768px) {
+            .content {
+                padding: 10px;
+            }
+
+            .content h1 {
+                font-size: 1.5rem;
+            }
+
+            .content p {
+                font-size: 1rem;
+            }
+
+            .account-box {
+                width: calc(100% - 30px);
+                margin: 10px;
+                padding: 15px;
+                padding-bottom: 140px;
+            }
+
+            .account-box p {
+                font-size: 14px;
+            }
+
+            .price {
+                font-size: 20px;
+            }
+
+            .button-container {
+                bottom: 15px;
+                padding: 0 15px;
+            }
+
+            .buy-button, .cart-button {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .content h1 {
+                font-size: 1.3rem;
+            }
+
+            .account-box {
+                padding: 12px;
+                padding-bottom: 130px;
+            }
+
+            .account-box p {
+                font-size: 13px;
+            }
+
+            .price {
+                font-size: 18px;
+            }
+
+            .button-container {
+                gap: 8px;
+            }
+
+            .buy-button, .cart-button {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
