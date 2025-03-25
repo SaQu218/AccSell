@@ -48,39 +48,28 @@
         }
 
         .dropdown-button {
-            background: #4a90e2;
-            padding: 10px 20px;
+            background: none;
             border: none;
-            border-radius: 5px;
             color: #ffffff;
             font-size: 16px;
             cursor: pointer;
-            transition: background 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            white-space: nowrap;
+            padding: 10px 15px;
+            transition: background-color 0.3s;
         }
 
         .dropdown-button:hover {
-            background: #357abd;
-        }
-
-        .menu-icon {
-            font-size: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .dropdown-content {
             display: none;
             position: absolute;
-            background: rgba(255, 255, 255, 0.05);
+            background-color: #1a1a1a;
             min-width: 160px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
             border-radius: 5px;
-            backdrop-filter: blur(5px);
-            z-index: 1;
-            top: 100%;
-            left: 0;
+            border: 1px solid #333;
         }
 
         .dropdown-content a {
@@ -88,11 +77,11 @@
             padding: 12px 16px;
             text-decoration: none;
             display: block;
-            font-size: 14px;
+            transition: background-color 0.3s;
         }
 
         .dropdown-content a:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background-color: #333;
         }
 
         .dropdown:hover .dropdown-content {
@@ -169,70 +158,49 @@
         /* Responsywność dla menu */
         @media screen and (max-width: 768px) {
             .navbar {
-                padding: 15px;
                 flex-direction: column;
-                align-items: stretch;
+                padding: 10px;
             }
 
-            .dropdown {
+            .navbar button, .dropdown {
                 width: 100%;
-            }
-
-            .dropdown-button {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .navbar-buttons {
-                width: 100%;
-                justify-content: center;
-                margin-top: 10px;
-            }
-
-            .logout-button, .settings-button, .menu-button {
-                padding: 8px 15px;
-                font-size: 14px;
+                margin: 5px 0;
+                text-align: center;
             }
 
             .dropdown-content {
-                width: 100%;
                 position: static;
+                width: 100%;
+                display: none;
+                background-color: #333;
                 box-shadow: none;
-                background: rgba(255, 255, 255, 0.1);
+                border: none;
                 border-radius: 0;
-                margin-top: 5px;
             }
 
             .dropdown-content a {
-                text-align: center;
                 padding: 10px;
+                text-align: center;
+            }
+
+            .dropdown:hover .dropdown-content {
+                display: none;
+            }
+
+            .dropdown.active .dropdown-content {
+                display: block;
             }
         }
 
         @media screen and (max-width: 480px) {
-            .navbar {
-                padding: 10px;
-            }
-
-            .navbar-buttons {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .logout-button, .settings-button, .menu-button {
-                width: 100%;
-                justify-content: center;
-                padding: 10px;
-                font-size: 13px;
-            }
-
-            .dropdown-button {
+            .navbar button, .dropdown-button {
                 font-size: 14px;
                 padding: 8px 12px;
             }
 
-            .menu-icon {
-                font-size: 16px;
+            .dropdown-content a {
+                font-size: 14px;
+                padding: 8px;
             }
         }
 
@@ -428,6 +396,39 @@
 
     // Obsługa overlay dla modalu
     document.getElementById("overlay").addEventListener("click", closeCart);
+
+    // Dodaj obsługę kliknięcia w przycisk menu na urządzeniach mobilnych
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        
+        dropdowns.forEach(dropdown => {
+            const button = dropdown.querySelector('.dropdown-button');
+            
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Zamknij wszystkie inne dropdowny
+                dropdowns.forEach(other => {
+                    if (other !== dropdown) {
+                        other.classList.remove('active');
+                    }
+                });
+                
+                // Przełącz aktualny dropdown
+                dropdown.classList.toggle('active');
+            });
+        });
+        
+        // Zamknij dropdowny po kliknięciu poza nimi
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                dropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            }
+        });
+    });
     </script>
 
 </body>
