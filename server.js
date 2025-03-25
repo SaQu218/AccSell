@@ -10,6 +10,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Twój klucz tajny Stripe
 const jwt = require('jsonwebtoken');
+const productsRouter = require('./api/products');
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
@@ -324,6 +325,9 @@ app.post('/update_profile', verifyToken, async (req, res) => {
         res.status(500).json({ message: 'Wystąpił błąd podczas aktualizacji danych' });
     }
 });
+
+// Dodaj router produktów
+app.use('/api/products', verifyToken, productsRouter);
 
 // Uruchomienie serwera
 app.listen(port, () => {

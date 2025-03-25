@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administratora</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+        }
+        .product-form {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal do wprowadzania hasła -->
+    <div class="modal fade" id="adminPasswordModal" tabindex="-1" aria-labelledby="adminPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminPasswordModalLabel">Autoryzacja administratora</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="adminPassword" class="form-label">Podaj hasło administratora:</label>
+                        <input type="password" class="form-control" id="adminPassword" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-primary" id="confirmPassword">Potwierdź</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="mb-4">Panel Administratora</h1>
+        <div class="product-form">
+            <form id="productForm">
+                <div class="mb-3">
+                    <label class="form-label">Typ produktu:</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="productType" id="steamAccount" value="steam">
+                        <label class="form-check-label" for="steamAccount">Konto Steam</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="productType" id="instagramAccount" value="instagram">
+                        <label class="form-check-label" for="instagramAccount">Konto Instagram</label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="productName" class="form-label">Nazwa produktu</label>
+                    <input type="text" class="form-control" id="productName" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="productDescription" class="form-label">Opis produktu</label>
+                    <textarea class="form-control" id="productDescription" rows="3" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="productPrice" class="form-label">Cena (PLN)</label>
+                    <input type="number" class="form-control" id="productPrice" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Dodaj produkt</button>
+            </form>
+        </div>
+
+        <div class="mt-4">
+            <h2>Lista produktów</h2>
+            <div id="productList" class="list-group mt-3">
+                <!-- Tu będą wyświetlane dodane produkty -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let productDataToAdd = null;
+        const adminModal = new bootstrap.Modal(document.getElementById('adminPasswordModal'));
+
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const productType = document.querySelector('input[name="productType"]:checked').value;
+            const productName = document.getElementById('productName').value;
+            const productDescription = document.getElementById('productDescription').value;
+            const productPrice = document.getElementById('productPrice').value;
+
+            productDataToAdd = {
+                type: productType,
+                name: productName,
+                description: productDescription,
+                price: parseFloat(productPrice)
+            };
+
+            // Pokaż modal z polem na hasło
+            adminModal.show();
+        });
+
+        document.getElementById('confirmPassword').addEventListener('click', async () => {
+            const password = document.getElementById('adminPassword').value;
+            
+            if (password === 'kutaz123') {
+                try {
+                    const response = await fetch('/api/products', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(productDataToAdd)
+                    });
+
+                    if (response.ok) {
+                        alert('Produkt został dodany pomyślnie!');
+                        document.getElementById('productForm').reset();
+                        document.getElementById('adminPassword').value = '';
+                        adminModal.hide();
+                        loadProducts();
+                    } else {
+                        alert('Wystąpił błąd podczas dodawania produktu.');
+                    }
+                } catch (error) {
+                    console.error('Błąd:', error);
+                    alert('Wystąpił błąd podczas dodawania produktu.');
+                }
+            } else {
+                alert('Nieprawidłowe hasło administratora!');
+            }
+        });
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products');
+                const products = await response.json();
+                
+                const productList = document.getElementById('productList');
+                productList.innerHTML = '';
+                
+                products.forEach(product => {
+                    const productElement = document.createElement('div');
+                    productElement.className = 'list-group-item';
+                    productElement.innerHTML = `
+                        <h5>${product.name}</h5>
+                        <p><strong>Typ:</strong> ${product.type}</p>
+                        <p><strong>Opis:</strong> ${product.description}</p>
+                        <p><strong>Cena:</strong> ${product.price} PLN</p>
+                    `;
+                    productList.appendChild(productElement);
+                });
+            } catch (error) {
+                console.error('Błąd podczas ładowania produktów:', error);
+            }
+        }
+
+        // Załaduj produkty przy starcie
+        loadProducts();
+    </script>
+</body>
+</html> 
