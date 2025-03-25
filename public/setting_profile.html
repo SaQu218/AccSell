@@ -141,18 +141,25 @@
         // Pobierz dane użytkownika przy ładowaniu strony
         window.onload = async function() {
             try {
-                const response = await fetch('/is_logged_in');
+                const response = await fetch('/is_logged_in', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
                 const data = await response.json();
                 
-                if (data.loggedIn) {
-                    document.getElementById('username').value = data.user.username;
-                    document.getElementById('email').value = data.user.email;
+                if (data.loggedIn && data.user) {
+                    document.getElementById('username').value = data.user.username || '';
+                    document.getElementById('email').value = data.user.email || '';
                 } else {
+                    console.log('Użytkownik nie jest zalogowany:', data);
                     window.location.href = 'index.html';
                 }
             } catch (error) {
                 console.error('Błąd podczas pobierania danych:', error);
-                showMessage('Błąd podczas pobierania danych', false);
+                window.location.href = 'index.html';
             }
         };
 
@@ -165,6 +172,7 @@
             try {
                 const response = await fetch('/update_profile', {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -179,7 +187,6 @@
 
                 if (response.ok) {
                     showMessage('Dane zostały zaktualizowane pomyślnie', true);
-                    // Wyczyść pole hasła po udanej aktualizacji
                     document.getElementById('password').value = '';
                 } else {
                     showMessage(data.message || 'Wystąpił błąd podczas aktualizacji', false);

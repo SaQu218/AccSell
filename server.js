@@ -29,12 +29,12 @@ app.use(cookieParser());
 // Konfiguracja sesji
 app.use(session({
     secret: process.env.SESSION_SECRET || 'twojSuperSekretnyKlucz',
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     cookie: {
-        secure: process.env.NODE_ENV === 'production', // Tylko w produkcji
-        httpOnly: true,  // Zabezpiecza ciasteczka przed dostępem z JS
-        maxAge: 24 * 60 * 60 * 1000  // Czas życia ciasteczka: 1 dzień
+        secure: false,
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000
     }
 }));
 app.post('/api/create-checkout-session', async (req, res) => {
@@ -174,11 +174,18 @@ function isLoggedIn(req, res, next) {
 }
 
 app.get('/is_logged_in', (req, res) => {
+    console.log('Sprawdzanie sesji:', req.session); // dodajemy log
     if (req.session && req.session.user) {
-        console.log('Zalogowany użytkownik:', req.session.user); // Sprawdź, czy sesja jest poprawna
-        res.json({ loggedIn: true, user: req.session.user });
+        console.log('Zalogowany użytkownik:', req.session.user);
+        res.json({ 
+            loggedIn: true, 
+            user: {
+                username: req.session.user.username,
+                email: req.session.user.email
+            } 
+        });
     } else {
-        console.log('Brak aktywnej sesji');  // Sprawdź, dlaczego sesja jest pusta
+        console.log('Brak aktywnej sesji');
         res.json({ loggedIn: false });
     }
 });
