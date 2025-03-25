@@ -176,7 +176,6 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    
     try {
         const user = await Users.findOne({ username });
 
@@ -189,28 +188,20 @@ app.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Nieprawidłowe hasło' });
         }
 
-        // Ustawienie sesji z większą ilością danych
-        req.session.user = {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            loginTime: new Date().toISOString()
-        };
+        // Generujemy token JWT
+        const token = jwt.sign(
+            { id: user._id, username: user.username, email: user.email },
+            process.env.JWT_SECRET || 'twojTajnyKlucz',
+            { expiresIn: '24h' }
+        );
 
-        // Upewnij się, że sesja jest zapisana przed wysłaniem odpowiedzi
-        req.session.save((err) => {
-            if (err) {
-                console.error('Błąd zapisywania sesji:', err);
-                return res.status(500).json({ message: 'Błąd podczas logowania' });
+        res.status(200).json({ 
+            message: 'Zalogowano pomyślnie',
+            token,
+            user: {
+                username: user.username,
+                email: user.email
             }
-            
-            res.status(200).json({ 
-                message: 'Zalogowano pomyślnie',
-                user: {
-                    username: user.username,
-                    email: user.email
-                }
-            });
         });
     } catch (error) {
         console.error('Błąd podczas logowania:', error);
@@ -235,22 +226,15 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-// Endpoint sprawdzania zalogowania
-app.get('/is_logged_in', (req, res) => {
-    console.log('Sprawdzanie sesji:', req.session); // dodajemy log
-    if (req.session && req.session.user) {
-        console.log('Zalogowany użytkownik:', req.session.user);
-        res.json({ 
-            loggedIn: true, 
-            user: {
-                username: req.session.user.username,
-                email: req.session.user.email
-            } 
-        });
-    } else {
-        console.log('Brak aktywnej sesji');
-        res.json({ loggedIn: false });
-    }
+// Endpoint sprawdzania zalogowania z użyciem tokenu
+app.get('/is_logged_in', verifyToken, (req, res) => {
+    res.json({ 
+        loggedIn: true, 
+        user: {
+            username: req.user.username,
+            email: req.user.email
+        }
+    });
 });
 
 app.get('/welcome.html', verifyToken, (req, res) => {
@@ -316,13 +300,11 @@ app.get('/register.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'register.html'));  // Strona rejestracji
 });
 
-// Ustawienia profilu
+// Endpoint aktualizacji profilu z użyciem tokenu
 app.post('/update_profile', verifyToken, async (req, res) => {
     const { newUsername, newEmail, newPassword } = req.body;
-    const userId = req.user.id;
-
     try {
-        const user = await Users.findById(userId);
+        const user = await Users.findById(req.user.id);
 
         if (!user) {
             return res.status(404).json({ message: 'Użytkownik nie znaleziony' });
@@ -336,11 +318,6 @@ app.post('/update_profile', verifyToken, async (req, res) => {
         }
 
         await user.save();
-
-        // Zaktualizowanie danych w sesji
-        req.user.username = user.username;
-        req.user.email = user.email;
-
         res.status(200).json({ message: 'Dane zostały zaktualizowane', user });
     } catch (err) {
         console.error(err);

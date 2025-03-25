@@ -140,10 +140,15 @@
     <script>
         window.onload = async function() {
             try {
+                const token = localStorage.getItem('userToken');
+                if (!token) {
+                    showMessage('Nie jesteś zalogowany', false);
+                    return;
+                }
+
                 const response = await fetch('/is_logged_in', {
-                    method: 'GET',
-                    credentials: 'include',
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -163,6 +168,12 @@
         };
 
         async function updateProfile() {
+            const token = localStorage.getItem('userToken');
+            if (!token) {
+                showMessage('Nie jesteś zalogowany', false);
+                return;
+            }
+
             const newUsername = document.getElementById('username').value;
             const newEmail = document.getElementById('email').value;
             const newPassword = document.getElementById('password').value;
@@ -170,8 +181,8 @@
             try {
                 const response = await fetch('/update_profile', {
                     method: 'POST',
-                    credentials: 'include',
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
