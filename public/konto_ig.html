@@ -106,10 +106,8 @@
             padding: 0 20px;
         }
 
-        .buy-button {
+        .buy-button, .cart-button {
             width: 80%;
-            background-color: #ffd700;
-            color: white;
             font-size: 18px;
             padding: 10px 20px;
             border: none;
@@ -117,21 +115,25 @@
             text-decoration: none;
             cursor: pointer;
             transition: background 0.3s ease;
-            position: static;
-            transform: none;
+            text-align: center;
+        }
+
+        .buy-button {
+            background-color: #ffd700;
+            color: white;
+        }
+
+        .buy-button:hover {
+            background-color: #e6b800;
         }
 
         .cart-button {
-            width: 80%;
             background-color: #28a745;
             color: white;
-            font-size: 18px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            cursor: pointer;
-            transition: background 0.3s ease;
+        }
+
+        .cart-button:hover {
+            background-color: #218838;
         }
 
         .notification {
@@ -175,7 +177,7 @@
             <p><strong>Konto Instagram: 50k Follow</strong></p>
             <p>Cena: <strong>40 zł</strong></p>
             <div class="button-container">
-                <a href="kup.html?product=Konto%20Instagram%2050k%20Follow" class="buy-button">Buy</a>
+                <a href="kup.html?product=Konto%20Instagram%2050k%20Follow" class="buy-button">Kup</a>
                 <button onclick="addToCart('Konto Instagram 50k Follow', 40)" class="cart-button">
                     Add to cart
                 </button>
@@ -186,7 +188,7 @@
             <p><strong>Konto Instagram: 195K Follow</strong></p>
             <p>Cena: <strong>180 zł</strong></p>
             <div class="button-container">
-                <a href="kup.html?product=Konto%20Instagram%20195K%20Follow" class="buy-button">Buy</a>
+                <a href="kup.html?product=Konto%20Instagram%20195K%20Follow" class="buy-button">Kup</a>
                 <button onclick="addToCart('Konto Instagram 195K Follow', 180)" class="cart-button">
                     Add to cart
                 </button>
