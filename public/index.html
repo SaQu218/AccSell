@@ -107,7 +107,7 @@
 <body>
     <div class="login-container">
         <h2>Logowanie</h2>
-        <form id="loginForm" onsubmit="loginUser(event)">
+        <form id="loginForm" onsubmit="login(event)">
             <div class="form-group">
                 <label for="username">Nazwa użytkownika</label>
                 <input type="text" id="username" name="username" placeholder="Wprowadź nazwę użytkownika" required>
@@ -125,5 +125,37 @@
     </div>
 
     <script src="login.js"></script> <!-- Dodane odwołanie do pliku login.js -->
+
+    <script>
+    async function login(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Zapisz token w localStorage
+                localStorage.setItem('userToken', data.token);
+                window.location.href = 'welcome.html';
+            } else {
+                showError(data.message || 'Błąd logowania');
+            }
+        } catch (error) {
+            console.error('Błąd:', error);
+            showError('Wystąpił błąd podczas logowania');
+        }
+    }
+    </script>
 </body>
 </html>
