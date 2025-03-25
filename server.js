@@ -38,7 +38,18 @@ app.use(session({
     }
 }));
 app.post('/api/create-checkout-session', async (req, res) => {
-    const { product } = req.body;  // Otrzymujesz nazwę produktu, np. "Facebook 2009"
+    const { product } = req.body;
+    
+    // Słownik cen dla różnych produktów
+    const prices = {
+        'Konto Facebook 2009': 4000, // 40 zł w groszach
+        'Konto Facebook 2012': 4500  // 45 zł w groszach
+    };
+
+    const price = prices[product];
+    if (!price) {
+        return res.status(400).json({ error: 'Nieprawidłowy produkt' });
+    }
     
     try {
         // Tworzenie sesji Stripe Checkout
@@ -47,21 +58,20 @@ app.post('/api/create-checkout-session', async (req, res) => {
             line_items: [
                 {
                     price_data: {
-                        currency: 'pln', // Waluta
+                        currency: 'pln',
                         product_data: {
-                            name: product, // Nazwa produktu
+                            name: product,
                         },
-                        unit_amount: 4000, // Cena w groszach (4000 groszy = 40 zł)
+                        unit_amount: price,
                     },
-                    quantity: 1, // Ilość produktu
+                    quantity: 1,
                 },
             ],
-            mode: 'payment', // Typ sesji (płatność)
-            success_url: `${process.env.BASE_URL}/success.html`,  // URL, gdzie użytkownik trafia po pomyślnym zakończeniu transakcji
-            cancel_url: `${process.env.BASE_URL}/cancel.html`,    // URL, gdzie użytkownik trafia po anulowaniu transakcji
+            mode: 'payment',
+            success_url: `${process.env.BASE_URL}/success.html`,
+            cancel_url: `${process.env.BASE_URL}/cancel.html`,
         });
 
-        // Zwracamy ID sesji Stripe
         res.status(200).json({ id: session.id });
     } catch (error) {
         console.error('Błąd podczas tworzenia sesji Stripe:', error.message);

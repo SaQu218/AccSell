@@ -81,38 +81,69 @@
 
         <div class="account-box">
             <i class="fa-brands fa-facebook"></i>
-            <p><strong>Konto Facebook: 2009</strong></p>
-            <p>Cena: <strong>40 zł</strong></p>
-            <button class="buy-button" onclick="buyProduct('Konto Facebook 2009')">Kup</button>
+            <p id="product-name"><strong>Ładowanie...</strong></p>
+            <p>Cena: <strong id="product-price">Ładowanie...</strong></p>
+            <button class="buy-button" onclick="buyProduct()">Kup</button>
         </div>
         <!-- Inne produkty -->
     </div>
 
     <script>
-        async function buyProduct(product) {
-    // Wyślij zapytanie do API, aby utworzyć sesję Stripe
-    const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ product: product })
-    });
+        // Funkcja do pobierania parametrów z URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
 
-    if (response.ok) {
-        const data = await response.json();
-        const stripeSessionId = data.id;
+        // Funkcja do ustawiania ceny na podstawie produktu
+        function setProductDetails() {
+            const product = getQueryParam('product');
+            if (!product) {
+                window.location.href = 'konto_fb.html';
+                return;
+            }
 
-        // Przekieruj użytkownika do Stripe Checkout
-        const stripe = Stripe('pk_test_51R2HeHDFinv4XW4HiOmJ9xDiLsit5j9GS31hAgOZk7II5KlzaSFW1hnB2U0NWcnjNzwZHtwSXzbPgvIjCqATN9SE00RjiI8n5r'); // Twój publiczny klucz Stripe
-        stripe.redirectToCheckout({ sessionId: stripeSessionId });
-    } else {
-        // Loguj pełną odpowiedź, aby sprawdzić, co się stało
-        const errorData = await response.json();
-        console.error('Błąd podczas tworzenia sesji płatności:', errorData);
-        alert('Błąd podczas tworzenia sesji płatności. Sprawdź konsolę, aby uzyskać więcej informacji.');
-    }
-}
+            const prices = {
+                'Konto Facebook 2009': 40,
+                'Konto Facebook 2012': 45
+            };
+
+            document.getElementById('product-name').innerHTML = `<strong>${product}</strong>`;
+            document.getElementById('product-price').innerHTML = `<strong>${prices[product]} zł</strong>`;
+        }
+
+        // Wywołaj funkcję przy załadowaniu strony
+        window.onload = setProductDetails;
+
+        async function buyProduct() {
+            const product = getQueryParam('product');
+            if (!product) {
+                alert('Nie wybrano produktu!');
+                return;
+            }
+
+            // Wyślij zapytanie do API, aby utworzyć sesję Stripe
+            const response = await fetch('/api/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ product: product })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const stripeSessionId = data.id;
+
+                // Przekieruj użytkownika do Stripe Checkout
+                const stripe = Stripe('pk_test_51R2HeHDFinv4XW4HiOmJ9xDiLsit5j9GS31hAgOZk7II5KlzaSFW1hnB2U0NWcnjNzwZHtwSXzbPgvIjCqATN9SE00RjiI8n5r');
+                stripe.redirectToCheckout({ sessionId: stripeSessionId });
+            } else {
+                const errorData = await response.json();
+                console.error('Błąd podczas tworzenia sesji płatności:', errorData);
+                alert('Błąd podczas tworzenia sesji płatności. Sprawdź konsolę, aby uzyskać więcej informacji.');
+            }
+        }
     </script>
 
 </body>
