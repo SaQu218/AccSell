@@ -44,7 +44,7 @@
             padding: 50px;
         }
 
-        .account-box {
+        .account-box, .account-box2, .account-box3 {
             background-color: #1a1a1a;
             border: 2px solid #4a90e2;
             border-radius: 10px;
@@ -56,23 +56,24 @@
             width: 300px;
             position: relative;
             padding-bottom: 120px;
+            margin: 20px;
         }
 
-        .account-box i {
+        .account-box i, .account-box2 i, .account-box3 i {
             font-size: 30px;
             color: #4a90e2;
             margin-right: 10px;
             vertical-align: middle;
         }
 
-        .account-box p {
+        .account-box p, .account-box2 p, .account-box3 p {
             font-size: 18px;
             margin: 5px 0;
             display: inline-block;
             vertical-align: middle;
         }
 
-        .account-box .buy-button {
+        .account-box .buy-button, .account-box2 .buy-button, .account-box3 .buy-button {
             background-color: #ffd700;
             color: white;
             font-size: 18px;
@@ -89,57 +90,7 @@
             transition: background 0.3s ease;
         }
 
-        .account-box .buy-button:hover {
-            background-color: #e6b800;
-        }
-
-        /* Styles for additional account boxes */
-        .account-box2, .account-box3 {
-            background-color: #1a1a1a;
-            border: 2px solid #4a90e2;
-            border-radius: 10px;
-            padding: 20px;
-            display: inline-block;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            margin-top: 20px;
-            width: 300px;
-            position: relative;
-            padding-bottom: 120px;
-        }
-
-        .account-box2 i, .account-box3 i {
-            font-size: 30px;
-            color: #4a90e2;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-
-        .account-box2 p, .account-box3 p {
-            font-size: 18px;
-            margin: 5px 0;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .account-box2 .buy-button, .account-box3 .buy-button {
-            background-color: #ffd700;
-            color: white;
-            font-size: 18px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .account-box2 .buy-button:hover, .account-box3 .buy-button:hover {
+        .account-box .buy-button:hover, .account-box2 .buy-button:hover, .account-box3 .buy-button:hover {
             background-color: #e6b800;
         }
 
@@ -181,6 +132,31 @@
             text-decoration: none;
             cursor: pointer;
             transition: background 0.3s ease;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -230,5 +206,26 @@
         </div>
     </div>
 
+    <div id="notification" class="notification"></div>
+
+    <script>
+        function addToCart(product, price) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart.push({
+                id: Date.now(),
+                product: product,
+                price: price
+            });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            const notification = document.getElementById('notification');
+            notification.textContent = 'Dodano do koszyka!';
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
