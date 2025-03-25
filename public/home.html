@@ -241,6 +241,30 @@
         .delete-btn:hover {
             background: #d4416f;
         }
+
+        .button-grid {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .menu-button {
+            background: #4a90e2;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-button:hover {
+            background: #357abd;
+        }
     </style>
 </head>
 <body>
@@ -260,7 +284,10 @@
         <div class="navbar-buttons">
             <button class="settings-button" onclick="window.location.href='setting_profile.html'">Ustawienia</button>
             <button class="logout-button" onclick="logout()">Wyloguj się</button>
-            <button class="cart-button" onclick="showCart()">Koszyk</button>
+            <a href="koszyk.html" class="menu-button">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Koszyk</span>
+            </a>
         </div>
     </div>
 
