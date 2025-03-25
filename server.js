@@ -1,4 +1,5 @@
 require('dotenv').config();  // Załaduj zmienne środowiskowe
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const mongoose = require('mongoose');
 const express = require('express');
