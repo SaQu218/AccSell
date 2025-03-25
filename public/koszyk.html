@@ -103,18 +103,17 @@
             color: #4a90e2;
         }
 
-        .account-box {
+        .account-box, .account-box2, .account-box3 {
             padding-bottom: 80px;
         }
 
         .button-container {
             position: absolute;
-            bottom: 20px;
+            bottom: 10px;
             left: 0;
             right: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
             gap: 10px;
             padding: 0 20px;
         }
@@ -122,18 +121,17 @@
         .buy-button, .cart-button {
             flex: 1;
             max-width: 45%;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-size: 16px;
-            text-decoration: none;
-            text-align: center;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .buy-button {
             background-color: #ffd700;
             color: white;
+            font-size: 16px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: static;
+            transform: none;
         }
 
         .buy-button:hover {
@@ -142,8 +140,6 @@
 
         .cart-button {
             background-color: #28a745;
-            color: white;
-            border: none;
         }
 
         .cart-button:hover {
