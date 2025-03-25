@@ -231,110 +231,61 @@
     <div class="content">
         <h1>Kolekcja Kont Steam Premium</h1>
         <p>Wybierz konto dopasowane do Twoich potrzeb</p>
-
-        <div class="account-box">
-            <i class="fa-brands fa-steam"></i>
-            <p><strong>Steam Vintage 2009</strong></p>
-            <p>✦ Konto z długą historią</p>
-            <p>✦ Pełny dostęp</p>
-            <p>✦ Gwarancja bezpieczeństwa</p>
-            <p class="price">120 zł</p>
-            <div class="button-container">
-                <a href="kup.html?product=Konto%20Steam%202009" class="buy-button">
-                    <i class="fas fa-shopping-bag"></i> Kup Teraz
-                </a>
-                <button onclick="addToCart('Konto Steam 2009', 120)" class="cart-button">
-                    <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
-                </button>
-            </div>
-        </div>
-        <div class="account-box">
-            <i class="fa-brands fa-steam"></i>
-            <p><strong>Steam Premium 2019</strong></p>
-            <p>✦ Nowsza wersja konta</p>
-            <p>✦ Pełna gwarancja</p>
-            <p>✦ Wsparcie 24/7</p>
-            <p class="price">50 zł</p>
-            <div class="button-container">
-                <a href="kup.html?product=Konto%20Steam%202019" class="buy-button">
-                    <i class="fas fa-shopping-bag"></i> Kup Teraz
-                </a>
-                <button onclick="addToCart('Konto Steam 2019', 50)" class="cart-button">
-                    <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
-                </button>
-            </div>
-        </div>
-        <div class="account-box">
-            <i class="fa-brands fa-steam"></i>
-            <p><strong>Steam CS2 Prime 2023</strong></p>
-            <p>✦ Prime Status CS2</p>
-            <p>✦ Nowe konto</p>
-            <p>✦ Pełny dostęp</p>
-            <p class="price">90 zł</p>
-            <div class="button-container">
-                <a href="kup.html?product=Konto%20Steam%202023%20prime%20cs2" class="buy-button">
-                    <i class="fas fa-shopping-bag"></i> Kup Teraz
-                </a>
-                <button onclick="addToCart('Konto Steam 2023 prime cs2', 90)" class="cart-button">
-                    <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
-                </button>
-            </div>
+        <div id="steam-accounts-container">
+            <!-- Tu będą dynamicznie dodawane konta Steam -->
         </div>
     </div>
 
     <div id="notification" class="notification"></div>
 
     <script>
-        function addToCart(product, price) {
-            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            cart.push({
-                id: Date.now(),
-                product: product,
-                price: price
-            });
-            localStorage.setItem('cart', JSON.stringify(cart));
-            
+        // Funkcja do wyświetlania powiadomienia
+        function showNotification(message) {
             const notification = document.getElementById('notification');
-            notification.textContent = 'Dodano do koszyka!';
+            notification.textContent = message;
             notification.style.display = 'block';
-            
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 2000);
+            }, 3000);
         }
 
-        // Dodaj obsługę kliknięcia w przycisk menu na urządzeniach mobilnych
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropdowns = document.querySelectorAll('.dropdown');
-            
-            dropdowns.forEach(dropdown => {
-                const button = dropdown.querySelector('.dropdown-button');
-                
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Zamknij wszystkie inne dropdowny
-                    dropdowns.forEach(other => {
-                        if (other !== dropdown) {
-                            other.classList.remove('active');
-                        }
-                    });
-                    
-                    // Przełącz aktualny dropdown
-                    dropdown.classList.toggle('active');
-                });
+        // Funkcja dodająca produkt do koszyka
+        function addToCart(name, price) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push({ name, price });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            showNotification('Produkt został dodany do koszyka!');
+        }
+
+        // Funkcja wyświetlająca produkty Steam
+        function displaySteamAccounts() {
+            const container = document.getElementById('steam-accounts-container');
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const steamProducts = products.filter(p => p.type === 'steam');
+
+            steamProducts.forEach(product => {
+                const accountBox = document.createElement('div');
+                accountBox.className = 'account-box';
+                accountBox.innerHTML = `
+                    <i class="fa-brands fa-steam"></i>
+                    <p><strong>${product.name}</strong></p>
+                    <p>${product.description}</p>
+                    <p class="price">${product.price} zł</p>
+                    <div class="button-container">
+                        <a href="kup.html?product=${encodeURIComponent(product.name)}" class="buy-button">
+                            <i class="fas fa-shopping-bag"></i> Kup Teraz
+                        </a>
+                        <button onclick="addToCart('${product.name}', ${product.price})" class="cart-button">
+                            <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
+                        </button>
+                    </div>
+                `;
+                container.appendChild(accountBox);
             });
-            
-            // Zamknij dropdowny po kliknięciu poza nimi
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.dropdown')) {
-                    dropdowns.forEach(dropdown => {
-                        dropdown.classList.remove('active');
-                    });
-                }
-            });
-        });
+        }
+
+        // Wyświetl produkty przy załadowaniu strony
+        displaySteamAccounts();
     </script>
 </body>
 </html>
