@@ -191,14 +191,26 @@ const verifyToken = (req, res, next) => {
 };
 
 // Zaktualizuj endpoint sprawdzania zalogowania
-app.get('/is_logged_in', verifyToken, (req, res) => {
-    res.json({ 
-        loggedIn: true, 
-        user: {
-            username: req.user.username,
-            email: req.user.email
-        }
-    });
+app.get('/is_logged_in', (req, res) => {
+    console.log('Cała sesja:', req.session);
+    console.log('Cookie:', req.cookies);
+    console.log('Headers:', req.headers);
+    
+    if (req.session && req.session.user) {
+        console.log('Zalogowany użytkownik:', req.session.user);
+        res.json({ 
+            loggedIn: true, 
+            user: {
+                username: req.session.user.username,
+                email: req.session.user.email
+            } 
+        });
+    } else {
+        console.log('Brak aktywnej sesji - szczegóły:');
+        console.log('Session ID:', req.sessionID);
+        console.log('Session Store:', req.sessionStore);
+        res.json({ loggedIn: false });
+    }
 });
 
 app.get('/welcome.html', verifyToken, (req, res) => {

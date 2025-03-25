@@ -140,29 +140,29 @@
     <script>
         window.onload = async function() {
             try {
-                const token = localStorage.getItem('userToken');
-                if (!token) {
-                    window.location.href = 'index.html';
-                    return;
-                }
-
+                console.log('Sprawdzanie statusu logowania...');
                 const response = await fetch('/is_logged_in', {
+                    method: 'GET',
+                    credentials: 'include',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
                 });
                 
+                console.log('Status odpowiedzi:', response.status);
                 const data = await response.json();
+                console.log('Otrzymane dane:', data);
                 
                 if (data.loggedIn && data.user) {
+                    console.log('Użytkownik zalogowany:', data.user);
                     document.getElementById('username').value = data.user.username || '';
                     document.getElementById('email').value = data.user.email || '';
                 } else {
+                    console.log('Użytkownik nie jest zalogowany');
                     window.location.href = 'index.html';
                 }
             } catch (error) {
-                console.error('Błąd podczas pobierania danych:', error);
+                console.error('Szczegóły błędu:', error);
                 window.location.href = 'index.html';
             }
         };
