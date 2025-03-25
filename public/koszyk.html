@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koszyk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #100f0f;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .top-bar {
+            background-color: #1a1a1a;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .home-button {
+            background: #4a90e2;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        .home-button:hover {
+            background: #357abd;
+        }
+
+        .cart-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .cart-item {
+            background-color: #1a1a1a;
+            border: 2px solid #4a90e2;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+
+        .checkout-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .checkout-button:hover {
+            background-color: #218838;
+        }
+
+        .empty-cart {
+            color: #666;
+            margin-top: 50px;
+        }
+
+        .total-price {
+            font-size: 24px;
+            margin: 20px 0;
+            color: #4a90e2;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="home.html" class="home-button">Strona Główna</a>
+    </div>
+
+    <div class="cart-container">
+        <h1>Twój Koszyk</h1>
+        <div id="cart-items"></div>
+        <div id="total-price" class="total-price"></div>
+        <button onclick="checkout()" class="checkout-button" id="checkout-button" style="display: none;">
+            Przejdź do płatności
+        </button>
+    </div>
+
+    <script>
+        function loadCart() {
+            const cartContainer = document.getElementById('cart-items');
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalPriceElement = document.getElementById('total-price');
+            const checkoutButton = document.getElementById('checkout-button');
+
+            cartContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartContainer.innerHTML = '<div class="empty-cart">Twój koszyk jest pusty</div>';
+                totalPriceElement.style.display = 'none';
+                checkoutButton.style.display = 'none';
+                return;
+            }
+
+            let totalPrice = 0;
+
+            cart.forEach(item => {
+                totalPrice += item.price;
+                const itemElement = document.createElement('div');
+                itemElement.className = 'cart-item';
+                itemElement.innerHTML = `
+                    <div class="cart-item-info">
+                        <input type="checkbox" onchange="updateCheckout()" id="item-${item.id}">
+                        <span>${item.product}</span>
+                        <span>${item.price} zł</span>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="delete-button">
+                        Usuń
+                    </button>
+                `;
+                cartContainer.appendChild(itemElement);
+            });
+
+            totalPriceElement.textContent = `Suma: ${totalPrice} zł`;
+            totalPriceElement.style.display = 'block';
+            checkoutButton.style.display = 'none';
+        }
+
+        function removeFromCart(itemId) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart = cart.filter(item => item.id !== itemId);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        function updateCheckout() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checkoutButton = document.getElementById('checkout-button');
+            const totalPriceElement = document.getElementById('total-price');
+            let totalPrice = 0;
+            let hasChecked = false;
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    hasChecked = true;
+                    const itemId = parseInt(checkbox.id.replace('item-', ''));
+                    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    const item = cart.find(i => i.id === itemId);
+                    if (item) {
+                        totalPrice += item.price;
+                    }
+                }
+            });
+
+            checkoutButton.style.display = hasChecked ? 'inline-block' : 'none';
+            totalPriceElement.textContent = `Suma wybranych: ${totalPrice} zł`;
+        }
+
+        function checkout() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const selectedItems = [];
+            
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const itemId = parseInt(checkbox.id.replace('item-', ''));
+                    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                    const item = cart.find(i => i.id === itemId);
+                    if (item) {
+                        selectedItems.push(item);
+                    }
+                }
+            });
+
+            if (selectedItems.length > 0) {
+                // Przekieruj do strony płatności z wybranymi produktami
+                const queryString = encodeURIComponent(JSON.stringify(selectedItems));
+                window.location.href = `kup.html?items=${queryString}`;
+            }
+        }
+
+        // Załaduj koszyk przy otwarciu strony
+        window.onload = loadCart;
+    </script>
+</body>
+</html> 
