@@ -164,6 +164,108 @@
         opacity: 1;
     }
 }
+
+@media screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .navbar button, .dropdown {
+        width: 100%;
+        margin: 5px 0;
+        text-align: center;
+    }
+
+    .navbar-buttons {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .menu-button {
+        width: 100%;
+        justify-content: center;
+        margin: 10px 0;
+    }
+
+    .dropdown-content {
+        position: static;
+        width: 100%;
+        display: none;
+        background-color: #333;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+    }
+
+    .dropdown-content a {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: none;
+    }
+
+    .dropdown.active .dropdown-content {
+        display: block;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .account-box {
+        width: 100%;
+        margin: 10px 0;
+        padding: 15px;
+    }
+
+    .account-box h2 {
+        font-size: 20px;
+    }
+
+    .account-box p {
+        font-size: 14px;
+    }
+
+    .buy-button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .navbar button, .dropdown-button {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .dropdown-content a {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .account-box {
+        padding: 10px;
+    }
+
+    .account-box h2 {
+        font-size: 18px;
+    }
+
+    .account-box p {
+        font-size: 12px;
+    }
+
+    .buy-button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}
     </style>
 </head>
 <body>
@@ -247,6 +349,39 @@
                 notification.style.display = 'none';
             }, 2000);
         }
+
+        // Dodaj obsługę kliknięcia w przycisk menu na urządzeniach mobilnych
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            dropdowns.forEach(dropdown => {
+                const button = dropdown.querySelector('.dropdown-button');
+                
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Zamknij wszystkie inne dropdowny
+                    dropdowns.forEach(other => {
+                        if (other !== dropdown) {
+                            other.classList.remove('active');
+                        }
+                    });
+                    
+                    // Przełącz aktualny dropdown
+                    dropdown.classList.toggle('active');
+                });
+            });
+            
+            // Zamknij dropdowny po kliknięciu poza nimi
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown')) {
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
