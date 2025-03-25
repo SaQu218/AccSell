@@ -9,6 +9,7 @@ const bcrypt = require('bcryptjs');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Twój klucz tajny Stripe
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
@@ -155,46 +156,52 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ message: 'Nieprawidłowe hasło' });
     }
 
-    // Ustawienie sesji
-    req.session.user = {
-        id: user._id,
-        username: user.username,
-        email: user.email
-    };
+    // Generujemy token dla użytkownika
+    const token = jwt.sign(
+        { id: user._id, username: user.username, email: user.email },
+        process.env.JWT_SECRET || 'twojTajnyKlucz',
+        { expiresIn: '24h' }
+    );
 
-    console.log('Zalogowany użytkownik:', req.session.user);  // Sprawdź, czy sesja została prawidłowo ustawiona
-
-    res.status(200).json({ message: 'Zalogowano pomyślnie' });
+    res.status(200).json({ 
+        message: 'Zalogowano pomyślnie',
+        token,
+        user: {
+            username: user.username,
+            email: user.email
+        }
+    });
 });
 
-// Sprawdzanie, czy użytkownik jest zalogowany
-function isLoggedIn(req, res, next) {
-    if (req.session.user) {
-        return next();  // Kontynuuj, jeśli użytkownik jest zalogowany
+// Nowy middleware do weryfikacji tokenu
+const verifyToken = (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ message: 'Brak autoryzacji' });
     }
-    console.log('Brak sesji użytkownika, przekierowanie na index.html');
-    res.redirect('/index.html');  // Zmieniono na index.html
-}
 
-app.get('/is_logged_in', (req, res) => {
-    console.log('Sprawdzanie sesji:', req.session); // dodajemy log
-    if (req.session && req.session.user) {
-        console.log('Zalogowany użytkownik:', req.session.user);
-        res.json({ 
-            loggedIn: true, 
-            user: {
-                username: req.session.user.username,
-                email: req.session.user.email
-            } 
-        });
-    } else {
-        console.log('Brak aktywnej sesji');
-        res.json({ loggedIn: false });
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'twojTajnyKlucz');
+        req.user = decoded;
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: 'Nieprawidłowy token' });
     }
+};
+
+// Zaktualizuj endpoint sprawdzania zalogowania
+app.get('/is_logged_in', verifyToken, (req, res) => {
+    res.json({ 
+        loggedIn: true, 
+        user: {
+            username: req.user.username,
+            email: req.user.email
+        }
+    });
 });
 
-app.get('/welcome.html', isLoggedIn, (req, res) => {
-    console.log('Sesja użytkownika:', req.session);  // Dodaj logowanie sesji
+app.get('/welcome.html', verifyToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'welcome.html'));  // Strona powitalna
 });
 
@@ -210,11 +217,11 @@ app.get('/logout', (req, res) => {
 });
 
 // Strony powitalne, home, settings itp.
-app.get('/home.html', isLoggedIn, (req, res) => {
+app.get('/home.html', verifyToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'home.html'));  // Strona główna
 });
 
-app.get('/setting_profile.html', isLoggedIn, (req, res) => {
+app.get('/setting_profile.html', verifyToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'setting_profile.html'));  // Ustawienia profilu
 });
 
@@ -223,11 +230,11 @@ app.get('/index.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));  // Strona logowania
 });
 
-app.get('/konto_fb.html', isLoggedIn, (req, res) => {
+app.get('/konto_fb.html', verifyToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_fb.html'));  // Strona logowania
 });
 
-app.get('/konto_ig.html', isLoggedIn, (req, res) => {
+app.get('/konto_ig.html', verifyToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_ig.html'));  // Strona logowania
 });
 
@@ -239,11 +246,11 @@ app.get('/cancel.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'cancel.html')); // Strona anulowania płatności
 });
 
-app.get('/konto_steam.html', isLoggedIn, (req, res) => {
+app.get('/konto_steam.html', verifyToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'konto_steam.html'));  // Strona logowania
 });
 
-app.get('/kup.html', isLoggedIn, (req, res) => {
+app.get('/kup.html', verifyToken, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'kup.html'));  // Strona logowania
 });
 
@@ -253,9 +260,9 @@ app.get('/register.html', (req, res) => {
 });
 
 // Ustawienia profilu
-app.post('/update_profile', isLoggedIn, async (req, res) => {
+app.post('/update_profile', verifyToken, async (req, res) => {
     const { newUsername, newEmail, newPassword } = req.body;
-    const userId = req.session.user.id;
+    const userId = req.user.id;
 
     try {
         const user = await Users.findById(userId);
@@ -274,8 +281,8 @@ app.post('/update_profile', isLoggedIn, async (req, res) => {
         await user.save();
 
         // Zaktualizowanie danych w sesji
-        req.session.user.username = user.username;
-        req.session.user.email = user.email;
+        req.user.username = user.username;
+        req.user.email = user.email;
 
         res.status(200).json({ message: 'Dane zostały zaktualizowane', user });
     } catch (err) {

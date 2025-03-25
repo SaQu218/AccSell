@@ -138,23 +138,27 @@
     </div>
 
     <script>
-        // Pobierz dane użytkownika przy ładowaniu strony
         window.onload = async function() {
             try {
+                const token = localStorage.getItem('userToken');
+                if (!token) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+
                 const response = await fetch('/is_logged_in', {
-                    method: 'GET',
-                    credentials: 'include',
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
                 });
+                
                 const data = await response.json();
                 
                 if (data.loggedIn && data.user) {
                     document.getElementById('username').value = data.user.username || '';
                     document.getElementById('email').value = data.user.email || '';
                 } else {
-                    console.log('Użytkownik nie jest zalogowany:', data);
                     window.location.href = 'index.html';
                 }
             } catch (error) {
@@ -163,8 +167,13 @@
             }
         };
 
-        // Funkcja do aktualizacji profilu
         async function updateProfile() {
+            const token = localStorage.getItem('userToken');
+            if (!token) {
+                window.location.href = 'index.html';
+                return;
+            }
+
             const newUsername = document.getElementById('username').value;
             const newEmail = document.getElementById('email').value;
             const newPassword = document.getElementById('password').value;
@@ -172,8 +181,8 @@
             try {
                 const response = await fetch('/update_profile', {
                     method: 'POST',
-                    credentials: 'include',
                     headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
