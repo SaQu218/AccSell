@@ -16,10 +16,16 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .delete-btn {
+        .delete-btn, .edit-btn {
             float: right;
-            color: red;
             cursor: pointer;
+            margin-left: 10px;
+        }
+        .delete-btn {
+            color: red;
+        }
+        .edit-btn {
+            color: #0d6efd;
         }
     </style>
 </head>
@@ -41,6 +47,50 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
                     <button type="button" class="btn btn-primary" id="confirmPassword">Potwierdź</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal do edycji produktu -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProductModalLabel">Edycja produktu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProductForm">
+                        <input type="hidden" id="editProductId">
+                        <div class="mb-3">
+                            <label class="form-label">Typ produktu:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="editProductType" id="editSteamAccount" value="steam" required>
+                                <label class="form-check-label" for="editSteamAccount">Konto Steam</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="editProductType" id="editInstagramAccount" value="instagram">
+                                <label class="form-check-label" for="editInstagramAccount">Konto Instagram</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductName" class="form-label">Nazwa produktu</label>
+                            <input type="text" class="form-control" id="editProductName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductDescription" class="form-label">Opis produktu</label>
+                            <textarea class="form-control" id="editProductDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductPrice" class="form-label">Cena (PLN)</label>
+                            <input type="number" class="form-control" id="editProductPrice" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-primary" id="saveEditButton">Zapisz zmiany</button>
                 </div>
             </div>
         </div>
@@ -184,6 +234,53 @@
             }
         });
 
+        const editProductModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+        let editingProductId = null;
+
+        // Funkcja do edycji produktu
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            editingProductId = productId;
+            
+            // Wypełnij formularz danymi produktu
+            document.getElementById('editProductId').value = product.id;
+            document.querySelector(`input[name="editProductType"][value="${product.type}"]`).checked = true;
+            document.getElementById('editProductName').value = product.name;
+            document.getElementById('editProductDescription').value = product.description;
+            document.getElementById('editProductPrice').value = product.price;
+
+            // Pokaż modal
+            editProductModal.show();
+        }
+
+        // Obsługa zapisywania zmian
+        document.getElementById('saveEditButton').addEventListener('click', () => {
+            const productIndex = products.findIndex(p => p.id === editingProductId);
+            if (productIndex === -1) return;
+
+            const updatedProduct = {
+                id: editingProductId,
+                type: document.querySelector('input[name="editProductType"]:checked').value,
+                name: document.getElementById('editProductName').value,
+                description: document.getElementById('editProductDescription').value,
+                price: parseFloat(document.getElementById('editProductPrice').value)
+            };
+
+            // Aktualizuj produkt w tablicy
+            products[productIndex] = updatedProduct;
+            
+            // Zapisz do localStorage
+            localStorage.setItem('products', JSON.stringify(products));
+            
+            // Zamknij modal i odśwież listę
+            editProductModal.hide();
+            displayProducts();
+            
+            alert('Produkt został zaktualizowany!');
+        });
+
         function displayProducts() {
             const productList = document.getElementById('productList');
             productList.innerHTML = '';
@@ -209,7 +306,9 @@
             productElement.innerHTML = `
                 <h5>${product.name} 
                     <span class="delete-btn" onclick="deleteProduct(${product.id})">❌</span>
+                    <span class="edit-btn" onclick="editProduct(${product.id})">✏️</span>
                 </h5>
+                <p><strong>Typ:</strong> ${product.type === 'steam' ? 'Steam' : 'Instagram'}</p>
                 <p><strong>Opis:</strong> ${product.description}</p>
                 <p><strong>Cena:</strong> ${product.price} PLN</p>
             `;
