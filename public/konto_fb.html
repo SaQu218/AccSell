@@ -151,7 +151,7 @@
 
     <script>
         function displayFacebookAccounts() {
-            const accountsContainer = document.getElementById('accounts-container');
+            const accountsContainer = document.getElementById('facebook-accounts-container');
             accountsContainer.innerHTML = '';
 
             const products = JSON.parse(localStorage.getItem('products') || '[]');
@@ -185,9 +185,11 @@
                     <p class="product-name"><strong>${account.name}</strong></p>
                     <div class="product-description">${formattedDescription}</div>
                     <p class="price">${priceDisplay}</p>
-                    <button class="buy-button" onclick="window.location.href='kup.html?id=${account.id}'">
-                        <i class="fas fa-shopping-bag"></i> KUP TERAZ
-                    </button>
+                    <div class="button-container">
+                        <button class="buy-button" onclick="window.location.href='kup.html?id=${account.id}'">
+                            <i class="fas fa-shopping-bag"></i> KUP TERAZ
+                        </button>
+                    </div>
                 `;
                 accountsContainer.appendChild(accountBox);
             });

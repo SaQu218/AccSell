@@ -303,9 +303,9 @@
                     <div class="product-description">${formattedDescription}</div>
                     <p class="price">${priceDisplay}</p>
                     <div class="button-container">
-                        <a href="kup.html?id=${account.id}" class="buy-button">
+                        <button class="buy-button" onclick="window.location.href='kup.html?id=${account.id}'">
                             <i class="fas fa-shopping-bag"></i> KUP TERAZ
-                        </a>
+                        </button>
                         <button onclick="addToCart('${account.name}', ${account.price})" class="cart-button">
                             <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
                         </button>
