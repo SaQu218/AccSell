@@ -159,50 +159,68 @@
         window.onload = setProductDetails;
 
         async function buyProduct() {
-            const product = getQueryParam('product');
-            if (!product) {
-                alert('Nie wybrano produktu!');
-                return;
-            }
-
-            const products = JSON.parse(localStorage.getItem('products')) || [];
-            const selectedProduct = products.find(p => p.name === product);
-
-            if (!selectedProduct) {
-                alert('Nie znaleziono produktu!');
-                return;
-            }
-
-            // Sprawdź czy produkt ma aktywną promocję
-            let price = selectedProduct.price;
-            if (selectedProduct.promotion && selectedProduct.promotion.enabled) {
-                const endDate = new Date(selectedProduct.promotion.endDate);
-                if (endDate > new Date()) {
-                    price = selectedProduct.promotion.price;
-                } else {
-                    // Promocja wygasła - usuń ją
-                    selectedProduct.promotion = null;
-                    localStorage.setItem('products', JSON.stringify(products));
+            try {
+                const product = getQueryParam('product');
+                if (!product) {
+                    alert('Nie wybrano produktu!');
+                    return;
                 }
-            }
 
-            const response = await fetch('/api/create-checkout-session', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-products': JSON.stringify(products)
-                },
-                body: JSON.stringify({ 
-                    product: product,
-                    price: price
-                })
-            });
+                const products = JSON.parse(localStorage.getItem('products')) || [];
+                const selectedProduct = products.find(p => p.name === product);
 
-            const data = await response.json();
-            if (data.id) {
-                window.location.href = data.url;
-            } else {
-                alert('Wystąpił błąd podczas tworzenia sesji płatności!');
+                if (!selectedProduct) {
+                    alert('Nie znaleziono produktu!');
+                    return;
+                }
+
+                // Sprawdź czy produkt ma aktywną promocję
+                let price = selectedProduct.price;
+                if (selectedProduct.promotion && selectedProduct.promotion.enabled) {
+                    const endDate = new Date(selectedProduct.promotion.endDate);
+                    if (endDate > new Date()) {
+                        price = selectedProduct.promotion.price;
+                    } else {
+                        // Promocja wygasła - usuń ją
+                        selectedProduct.promotion = null;
+                        localStorage.setItem('products', JSON.stringify(products));
+                    }
+                }
+
+                console.log('Wysyłanie żądania płatności:', {
+                    product,
+                    price,
+                    products
+                });
+
+                const response = await fetch('/api/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-products': JSON.stringify(products)
+                    },
+                    body: JSON.stringify({ 
+                        product: product,
+                        price: price
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Odpowiedź z serwera:', data);
+                
+                if (data.url) {
+                    window.location.href = data.url;
+                } else {
+                    throw new Error('Nie otrzymano URL do płatności');
+                }
+            } catch (error) {
+                console.error('Błąd podczas tworzenia sesji płatności:', error);
+                alert(`Wystąpił błąd podczas tworzenia sesji płatności: ${error.message}`);
             }
         }
     </script>

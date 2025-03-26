@@ -57,11 +57,32 @@ app.post('/api/create-checkout-session', async (req, res) => {
     const { product, price } = req.body;
     
     try {
+        console.log('Otrzymano żądanie płatności:', { product, price });
+        console.log('Headers:', req.headers);
+
+        // Sprawdź czy klucz Stripe jest skonfigurowany
+        if (!process.env.STRIPE_SECRET_KEY) {
+            console.error('Brak klucza STRIPE_SECRET_KEY w zmiennych środowiskowych');
+            return res.status(500).json({ error: 'Błąd konfiguracji płatności' });
+        }
+
         // Pobierz produkty z localStorage
-        const products = JSON.parse(req.headers['x-products'] || '[]');
+        const productsHeader = req.headers['x-products'];
+        console.log('Products header:', productsHeader);
+        
+        let products = [];
+        try {
+            products = JSON.parse(productsHeader || '[]');
+        } catch (e) {
+            console.error('Błąd parsowania products:', e);
+            return res.status(400).json({ error: 'Nieprawidłowy format danych produktów' });
+        }
+
         const selectedProduct = products.find(p => p.name === product);
+        console.log('Znaleziony produkt:', selectedProduct);
 
         if (!selectedProduct) {
+            console.error('Nie znaleziono produktu:', product);
             return res.status(400).json({ error: 'Nieprawidłowy produkt' });
         }
 
@@ -75,6 +96,12 @@ app.post('/api/create-checkout-session', async (req, res) => {
         }
 
         const priceInGrosz = Math.round(finalPrice * 100); // Konwertuj na grosze
+
+        console.log('Tworzenie sesji Stripe:', {
+            product,
+            price: finalPrice,
+            priceInGrosz
+        });
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -91,13 +118,14 @@ app.post('/api/create-checkout-session', async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: `${process.env.BASE_URL}/success.html`,
-            cancel_url: `${process.env.BASE_URL}/cancel.html`,
+            success_url: `${process.env.BASE_URL || 'http://localhost:3000'}/success.html`,
+            cancel_url: `${process.env.BASE_URL || 'http://localhost:3000'}/cancel.html`,
         });
 
+        console.log('Sesja Stripe utworzona:', session.id);
         res.status(200).json({ id: session.id, url: session.url });
     } catch (error) {
-        console.error('Błąd podczas tworzenia sesji Stripe:', error.message);
+        console.error('Błąd podczas tworzenia sesji Stripe:', error);
         res.status(500).json({ error: error.message });
     }
 });
