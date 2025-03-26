@@ -31,48 +31,47 @@
 </head>
 <body>
     <!-- Modal do wprowadzania hasła -->
-    <div class="modal fade" id="adminPasswordModal" tabindex="-1" aria-labelledby="adminPasswordModalLabel" aria-hidden="true">
+    <div class="modal fade" id="adminPasswordModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="adminPasswordModalLabel">Autoryzacja administratora</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Autoryzacja</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="adminPassword" class="form-label">Podaj hasło administratora:</label>
-                        <input type="password" class="form-control" id="adminPassword" required>
+                <form id="adminPasswordForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="adminPasswordInput" class="form-label">Podaj hasło administratora:</label>
+                            <input type="password" class="form-control" id="adminPasswordInput" required>
+                        </div>
+                        <input type="hidden" id="adminActionType" value="add">
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                    <button type="button" class="btn btn-primary" id="confirmPassword">Potwierdź</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary">Potwierdź</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <!-- Modal do edycji produktu -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editProductModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editProductModalLabel">Edycja produktu</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Edytuj produkt</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="editProductForm">
-                        <input type="hidden" id="editProductId">
+                <form id="editProductForm">
+                    <div class="modal-body">
                         <div class="mb-3">
-                            <label class="form-label">Typ produktu:</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="editProductType" id="editSteamAccount" value="steam" required>
-                                <label class="form-check-label" for="editSteamAccount">Konto Steam</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="editProductType" id="editInstagramAccount" value="instagram">
-                                <label class="form-check-label" for="editInstagramAccount">Konto Instagram</label>
-                            </div>
+                            <label class="form-label">Typ produktu</label>
+                            <select class="form-select" id="editProductType" required>
+                                <option value="steam">Konto Steam</option>
+                                <option value="instagram">Konto Instagram</option>
+                                <option value="facebook">Konto Facebook</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="editProductName" class="form-label">Nazwa produktu</label>
@@ -80,7 +79,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="editProductDescription" class="form-label">Opis produktu</label>
-                            <textarea class="form-control" id="editProductDescription" rows="3" required></textarea>
+                            <small class="form-text text-muted d-block">Każdą linię opisu zacznij od "✦ ". Przykład:<br>✦ Długa historia<br>✦ Pełna weryfikacja<br>✦ Gwarancja bezpieczeństwa</small>
+                            <textarea class="form-control mt-2" id="editProductDescription" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="editProductPrice" class="form-label">Cena (PLN)</label>
@@ -104,12 +104,12 @@
                                 <input type="datetime-local" class="form-control" id="editPromotionEndDate">
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                    <button type="button" class="btn btn-primary" id="saveEditButton">Zapisz zmiany</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -259,7 +259,10 @@
         let products = JSON.parse(localStorage.getItem('products'));
 
         let productDataToAdd = null;
+        let productToEdit = null;
+        let productToDelete = null;
         const adminModal = new bootstrap.Modal(document.getElementById('adminPasswordModal'));
+        const editProductModal = new bootstrap.Modal(document.getElementById('editProductModal'));
 
         function togglePromotionFields() {
             const promotionFields = document.getElementById('promotionFields');
@@ -295,87 +298,113 @@
                 } : null
             };
 
+            document.getElementById('adminActionType').value = 'add';
             adminModal.show();
         });
 
-        document.getElementById('confirmPassword').addEventListener('click', () => {
-            const password = document.getElementById('adminPassword').value;
-            
-            if (password === 'kutaz123') {
-                // Dodaj produkt do tablicy
-                products.push(productDataToAdd);
-                
-                // Zapisz do localStorage
-                localStorage.setItem('products', JSON.stringify(products));
-                
-                // Wyczyść formularz i zamknij modal
-                document.getElementById('productForm').reset();
-                document.getElementById('adminPassword').value = '';
-                adminModal.hide();
-                
-                // Odśwież listę produktów
-                displayProducts();
-                
-                alert('Produkt został dodany pomyślnie!');
-            } else {
-                alert('Nieprawidłowe hasło administratora!');
-            }
-        });
-
-        const editProductModal = new bootstrap.Modal(document.getElementById('editProductModal'));
-        let editingProductId = null;
-
-        // Funkcja do edycji produktu
         function editProduct(productId) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
 
-            editingProductId = productId;
-            
-            document.getElementById('editProductId').value = product.id;
-            document.querySelector(`input[name="editProductType"][value="${product.type}"]`).checked = true;
+            productToEdit = product;
+            document.getElementById('adminActionType').value = 'edit';
+            adminModal.show();
+        }
+
+        function deleteProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            productToDelete = productId;
+            document.getElementById('adminActionType').value = 'delete';
+            adminModal.show();
+        }
+
+        document.getElementById('adminPasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('adminPasswordInput').value;
+            const actionType = document.getElementById('adminActionType').value;
+
+            if (password === 'admin123') {
+                switch(actionType) {
+                    case 'add':
+                        if (productDataToAdd) {
+                            products.push(productDataToAdd);
+                            localStorage.setItem('products', JSON.stringify(products));
+                            productDataToAdd = null;
+                            document.getElementById('productForm').reset();
+                            displayProducts();
+                        }
+                        break;
+                    case 'edit':
+                        if (productToEdit) {
+                            showEditModal(productToEdit);
+                        }
+                        break;
+                    case 'delete':
+                        if (productToDelete) {
+                            products = products.filter(p => p.id !== productToDelete);
+                            localStorage.setItem('products', JSON.stringify(products));
+                            productToDelete = null;
+                            displayProducts();
+                        }
+                        break;
+                }
+                adminModal.hide();
+                document.getElementById('adminPasswordInput').value = '';
+            } else {
+                alert('Nieprawidłowe hasło!');
+            }
+        });
+
+        function showEditModal(product) {
+            // Wypełnij formularz edycji danymi produktu
+            document.getElementById('editProductType').value = product.type;
             document.getElementById('editProductName').value = product.name;
             document.getElementById('editProductDescription').value = product.description;
             document.getElementById('editProductPrice').value = product.price;
-            
-            // Ustawienie pól promocji
-            const hasPromotion = product.promotion && product.promotion.enabled;
-            document.getElementById('editProductPromotion').checked = hasPromotion;
-            if (hasPromotion) {
+
+            if (product.promotion && product.promotion.enabled) {
+                document.getElementById('editProductPromotion').checked = true;
                 document.getElementById('editPromotionPrice').value = product.promotion.price;
                 document.getElementById('editPromotionEndDate').value = product.promotion.endDate;
                 document.getElementById('editPromotionFields').style.display = 'block';
             } else {
+                document.getElementById('editProductPromotion').checked = false;
                 document.getElementById('editPromotionFields').style.display = 'none';
             }
 
-            editProductModal.show();
+            // Pokaż modal edycji
+            const editModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+            editModal.show();
         }
 
-        // Obsługa zapisywania zmian
-        document.getElementById('saveEditButton').addEventListener('click', () => {
-            const productIndex = products.findIndex(p => p.id === editingProductId);
-            if (productIndex === -1) return;
+        document.getElementById('editProductForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const index = products.findIndex(p => p.id === productToEdit.id);
+            if (index === -1) return;
 
-            const isPromotionEnabled = document.getElementById('editProductPromotion').checked;
-            const updatedProduct = {
-                id: editingProductId,
-                type: document.querySelector('input[name="editProductType"]:checked').value,
+            products[index] = {
+                ...productToEdit,
+                type: document.getElementById('editProductType').value,
                 name: document.getElementById('editProductName').value,
                 description: document.getElementById('editProductDescription').value,
                 price: parseFloat(document.getElementById('editProductPrice').value),
-                promotion: isPromotionEnabled ? {
+                promotion: document.getElementById('editProductPromotion').checked ? {
                     enabled: true,
                     price: parseFloat(document.getElementById('editPromotionPrice').value),
                     endDate: document.getElementById('editPromotionEndDate').value
                 } : null
             };
 
-            products[productIndex] = updatedProduct;
             localStorage.setItem('products', JSON.stringify(products));
-            editProductModal.hide();
+            productToEdit = null;
             displayProducts();
-            alert('Produkt został zaktualizowany!');
+
+            // Zamknij modal edycji
+            const editModal = bootstrap.Modal.getInstance(document.getElementById('editProductModal'));
+            editModal.hide();
         });
 
         // Funkcja do sprawdzania i aktualizowania statusu promocji
@@ -455,15 +484,6 @@
                 <p><strong>Cena:</strong> ${priceDisplay}</p>
             `;
             productList.appendChild(productElement);
-        }
-
-        function deleteProduct(productId) {
-            if (confirm('Czy na pewno chcesz usunąć ten produkt?')) {
-                products = products.filter(p => p.id !== productId);
-                // Zapisz zaktualizowaną listę do localStorage
-                localStorage.setItem('products', JSON.stringify(products));
-                displayProducts();
-            }
         }
 
         // Wyświetl produkty przy starcie
