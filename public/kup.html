@@ -193,8 +193,8 @@
                     products
                 });
 
-                // Kodujemy dane produktów w Base64, aby uniknąć problemów z polskimi znakami
-                const encodedProducts = btoa(JSON.stringify(products));
+                // Używamy encodeURIComponent do kodowania danych
+                const encodedProducts = encodeURIComponent(JSON.stringify(products));
 
                 const response = await fetch('/api/create-checkout-session', {
                     method: 'POST',

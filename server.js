@@ -72,8 +72,8 @@ app.post('/api/create-checkout-session', async (req, res) => {
         
         let products = [];
         try {
-            // Dekodujemy dane z Base64
-            const decodedProducts = Buffer.from(productsHeader, 'base64').toString('utf8');
+            // Dekodujemy dane zakodowane przez encodeURIComponent
+            const decodedProducts = decodeURIComponent(productsHeader);
             products = JSON.parse(decodedProducts);
         } catch (e) {
             console.error('Błąd parsowania products:', e);
