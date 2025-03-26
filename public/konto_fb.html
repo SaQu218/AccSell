@@ -184,7 +184,7 @@
                     ${descriptionHtml}
                     <p class="price">${priceDisplay}</p>
                     <div class="button-container">
-                        <a href="kup.html?id=${product.id}" class="buy-button">
+                        <a href="kup.html?product=${encodeURIComponent(product.name)}&type=facebook" class="buy-button">
                             <i class="fas fa-shopping-bag"></i> Kup Teraz
                         </a>
                         <button onclick="addToCart('${product.name}', ${product.price})" class="cart-button">
