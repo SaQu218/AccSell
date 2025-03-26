@@ -66,13 +66,15 @@ app.post('/api/create-checkout-session', async (req, res) => {
             return res.status(500).json({ error: 'Błąd konfiguracji płatności' });
         }
 
-        // Pobierz produkty z localStorage
+        // Pobierz i zdekoduj produkty z nagłówka
         const productsHeader = req.headers['x-products'];
         console.log('Products header:', productsHeader);
         
         let products = [];
         try {
-            products = JSON.parse(productsHeader || '[]');
+            // Dekodujemy dane z Base64
+            const decodedProducts = Buffer.from(productsHeader, 'base64').toString('utf8');
+            products = JSON.parse(decodedProducts);
         } catch (e) {
             console.error('Błąd parsowania products:', e);
             return res.status(400).json({ error: 'Nieprawidłowy format danych produktów' });
