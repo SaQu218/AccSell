@@ -134,6 +134,7 @@ mongoose.connection.on('disconnected', () => {
 
 // Schemat użytkownika
 const userSchema = new mongoose.Schema({
+    userId: { type: String, unique: true },
     username: String,
     email: String,
     password: String,
@@ -157,6 +158,13 @@ const getClientIp = (req) => {
     return req.ip || req.connection.remoteAddress;
 };
 
+// Funkcja do generowania unikalnego ID użytkownika
+const generateUserId = () => {
+    const timestamp = Date.now().toString();
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `USER${timestamp}${random}`;
+};
+
 app.post('/register', async (req, res) => {
     const { username, email, password, confirm_password } = req.body;
     const userIp = getClientIp(req);
@@ -171,8 +179,10 @@ app.post('/register', async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const userId = generateUserId();
 
     const user = new Users({
+        userId,
         username,
         email,
         password: hashedPassword,
@@ -212,7 +222,12 @@ app.post('/login', async (req, res) => {
 
         // Generujemy token JWT
         const token = jwt.sign(
-            { id: user._id, username: user.username, email: user.email },
+            { 
+                id: user._id, 
+                userId: user.userId,
+                username: user.username, 
+                email: user.email 
+            },
             process.env.JWT_SECRET || 'twojTajnyKlucz',
             { expiresIn: '24h' }
         );
@@ -221,6 +236,7 @@ app.post('/login', async (req, res) => {
             message: 'Zalogowano pomyślnie',
             token,
             user: {
+                userId: user.userId,
                 username: user.username,
                 email: user.email
             }
