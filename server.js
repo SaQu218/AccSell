@@ -147,9 +147,19 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html')); // Główna strona logowania
 });
 
+// Funkcja do pobierania rzeczywistego IP użytkownika
+const getClientIp = (req) => {
+    const forwardedFor = req.headers['x-forwarded-for'];
+    if (forwardedFor) {
+        // Pobierz pierwszy adres IP z listy (najbardziej zaufany)
+        return forwardedFor.split(',')[0].trim();
+    }
+    return req.ip || req.connection.remoteAddress;
+};
+
 app.post('/register', async (req, res) => {
     const { username, email, password, confirm_password } = req.body;
-    const userIp = req.ip || req.connection.remoteAddress;
+    const userIp = getClientIp(req);
 
     if (password !== confirm_password) {
         return res.send('Hasła nie są takie same!');
@@ -182,7 +192,7 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    const userIp = req.ip || req.connection.remoteAddress;
+    const userIp = getClientIp(req);
 
     try {
         const user = await Users.findOne({ username });
