@@ -386,13 +386,7 @@
         function submitReview() {
             const rating = document.getElementById('rating').value;
             const comment = document.getElementById('reviewText').value;
-            const name = prompt('Podaj swoje imię:');
             
-            if (!name) {
-                alert('Proszę podać imię!');
-                return;
-            }
-
             if (!comment.trim()) {
                 alert('Proszę napisać opinię przed wysłaniem!');
                 return;
@@ -400,7 +394,7 @@
 
             const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
             const review = {
-                name: name,
+                name: 'TEST',
                 rating: parseInt(rating),
                 comment: comment,
                 date: new Date().toISOString()
