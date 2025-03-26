@@ -474,13 +474,20 @@
                 }
             }
 
+            // Formatowanie opisu produktu - zamiana ✦ na nowe linie
+            const formattedDescription = product.description
+                .split('✦')
+                .filter(line => line.trim() !== '')
+                .map(line => '✦' + line)
+                .join('<br>');
+
             productElement.innerHTML = `
                 <h5>${product.name} 
                     <span class="delete-btn" onclick="deleteProduct(${product.id})">❌</span>
                     <span class="edit-btn" onclick="editProduct(${product.id})">✏️</span>
                 </h5>
                 <p><strong>Typ:</strong> ${product.type === 'steam' ? 'Steam' : product.type === 'instagram' ? 'Instagram' : 'Facebook'}</p>
-                <p><strong>Opis:</strong> ${product.description}</p>
+                <p><strong>Opis:</strong><br>${formattedDescription}</p>
                 <p><strong>Cena:</strong> ${priceDisplay}</p>
             `;
             productList.appendChild(productElement);
