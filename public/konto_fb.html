@@ -134,6 +134,53 @@
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* Responsywność */
+        @media screen and (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .content h1 {
+                font-size: 1.5rem;
+            }
+
+            .content p {
+                font-size: 1rem;
+            }
+
+            .account-box {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .content h1 {
+                font-size: 1.3rem;
+            }
+
+            .account-box {
+                padding: 12px;
+                padding-bottom: 130px;
+            }
+
+            .account-box p {
+                font-size: 13px;
+            }
+
+            .price {
+                font-size: 18px;
+            }
+
+            .button-container {
+                gap: 8px;
+            }
+
+            .buy-button, .cart-button {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        } 
     </style>
 </head>
 <body>
