@@ -268,28 +268,50 @@
 
         // Funkcja wyświetlająca produkty Instagram
         function displayInstagramAccounts() {
-            const container = document.getElementById('instagram-accounts-container');
-            const products = JSON.parse(localStorage.getItem('products')) || [];
-            const instagramProducts = products.filter(p => p.type === 'instagram');
+            const accountsContainer = document.getElementById('instagram-accounts-container');
+            accountsContainer.innerHTML = '';
 
-            instagramProducts.forEach(product => {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const instagramAccounts = products.filter(p => p.type === 'instagram');
+
+            instagramAccounts.forEach(account => {
+                const formattedDescription = account.description
+                    .split('✦')
+                    .filter(line => line.trim() !== '')
+                    .map(line => '✦' + line.trim())
+                    .join('<br>');
+
                 const accountBox = document.createElement('div');
                 accountBox.className = 'account-box';
+                
+                let priceDisplay = `${account.price} PLN`;
+                if (account.promotion && account.promotion.enabled) {
+                    const endDate = new Date(account.promotion.endDate);
+                    if (endDate > new Date()) {
+                        priceDisplay = `
+                            <span style="text-decoration: line-through;">${account.price} PLN</span>
+                            <span style="color: red;">${account.promotion.price} PLN</span>
+                            <br>
+                            <small>Promocja do: ${endDate.toLocaleString()}</small>
+                        `;
+                    }
+                }
+
                 accountBox.innerHTML = `
-                    <i class="fab fa-instagram"></i>
-                    <p><strong>${product.name}</strong></p>
-                    <p>${product.description}</p>
-                    <p class="price">${product.price} zł</p>
+                    <i class="fa-brands fa-instagram"></i>
+                    <p class="product-name"><strong>${account.name}</strong></p>
+                    <div class="product-description">${formattedDescription}</div>
+                    <p class="price">${priceDisplay}</p>
                     <div class="button-container">
-                        <a href="kup.html?product=${encodeURIComponent(product.name)}" class="buy-button">
-                            <i class="fas fa-shopping-bag"></i> Kup Teraz
+                        <a href="kup.html?id=${account.id}" class="buy-button">
+                            <i class="fas fa-shopping-bag"></i> KUP TERAZ
                         </a>
-                        <button onclick="addToCart('${product.name}', ${product.price})" class="cart-button">
+                        <button onclick="addToCart('${account.name}', ${account.price})" class="cart-button">
                             <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
                         </button>
                     </div>
                 `;
-                container.appendChild(accountBox);
+                accountsContainer.appendChild(accountBox);
             });
         }
 

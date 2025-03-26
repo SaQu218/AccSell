@@ -151,49 +151,45 @@
 
     <script>
         function displayFacebookAccounts() {
-            const container = document.getElementById('facebook-accounts-container');
-            const products = JSON.parse(localStorage.getItem('products')) || [];
-            const facebookProducts = products.filter(p => p.type === 'facebook');
+            const accountsContainer = document.getElementById('accounts-container');
+            accountsContainer.innerHTML = '';
 
-            facebookProducts.forEach(product => {
+            const products = JSON.parse(localStorage.getItem('products') || '[]');
+            const facebookAccounts = products.filter(p => p.type === 'facebook');
+
+            facebookAccounts.forEach(account => {
+                const formattedDescription = account.description
+                    .split('✦')
+                    .filter(line => line.trim() !== '')
+                    .map(line => '✦' + line.trim())
+                    .join('<br>');
+
                 const accountBox = document.createElement('div');
                 accountBox.className = 'account-box';
-
-                // Przygotuj wyświetlanie ceny
-                let priceDisplay = `${product.price} zł`;
-                if (product.promotion && product.promotion.enabled) {
-                    const endDate = new Date(product.promotion.endDate);
+                
+                let priceDisplay = `${account.price} PLN`;
+                if (account.promotion && account.promotion.enabled) {
+                    const endDate = new Date(account.promotion.endDate);
                     if (endDate > new Date()) {
                         priceDisplay = `
-                            <span style="text-decoration: line-through;">${product.price} zł</span>
-                            <span style="color: #ffd700; margin-left: 10px;">${product.promotion.price} zł</span>
+                            <span style="text-decoration: line-through;">${account.price} PLN</span>
+                            <span style="color: red;">${account.promotion.price} PLN</span>
                             <br>
-                            <small style="color: #666;">Promocja do: ${endDate.toLocaleString()}</small>
+                            <small>Promocja do: ${endDate.toLocaleString()}</small>
                         `;
                     }
                 }
 
-                // Przygotuj wyświetlanie opisu
-                const descriptionLines = product.description.split('\n');
-                const descriptionHtml = descriptionLines
-                    .map(line => `<p>${line.trim().startsWith('✦') ? line.trim() : '✦ ' + line.trim()}</p>`)
-                    .join('');
-
                 accountBox.innerHTML = `
                     <i class="fa-brands fa-facebook"></i>
-                    <p class="product-name"><strong>${product.name}</strong></p>
-                    ${descriptionHtml}
+                    <p class="product-name"><strong>${account.name}</strong></p>
+                    <div class="product-description">${formattedDescription}</div>
                     <p class="price">${priceDisplay}</p>
-                    <div class="button-container">
-                        <a href="kup.html?product=${encodeURIComponent(product.name)}" class="buy-button">
-                            <i class="fas fa-shopping-bag"></i> KUP TERAZ
-                        </a>
-                        <button onclick="addToCart('${product.name}', ${product.price})" class="cart-button">
-                            <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
-                        </button>
-                    </div>
+                    <button class="buy-button" onclick="window.location.href='kup.html?id=${account.id}'">
+                        <i class="fas fa-shopping-bag"></i> KUP TERAZ
+                    </button>
                 `;
-                container.appendChild(accountBox);
+                accountsContainer.appendChild(accountBox);
             });
         }
 
