@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Konto Facebook</title>
+    <title>Konta Facebook</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body {
@@ -13,19 +13,13 @@
             text-align: center;
             padding: 0;
             margin: 0;
-            min-height: 100vh;
         }
-
         .top-bar {
-            background-color: #1a1a1a; 
+            background-color: #1a1a1a;
             padding: 15px;
             text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
-
         .home-button {
             background: #4a90e2;
             padding: 10px 20px;
@@ -39,68 +33,49 @@
             transition: background 0.3s;
             margin-top: 10px;
         }
-
         .home-button:hover {
             background: #357abd;
         }
-
         .content {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            padding: 50px;
         }
-
-        .content h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .content p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-        }
-
         .account-box {
             background-color: #1a1a1a;
-            border: 1px solid #4a90e2;
+            border: 2px solid #4a90e2;
             border-radius: 10px;
             padding: 20px;
-            margin: 15px;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            margin: 20px;
             width: 300px;
             position: relative;
-            padding-bottom: 160px;
-            display: inline-block;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-sizing: border-box;
+            padding-bottom: 120px;
         }
-
-        .account-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
-        }
-
         .account-box i {
             font-size: 30px;
             color: #4a90e2;
-            margin-right: 10px;
-            vertical-align: middle;
+            margin-bottom: 15px;
         }
-
         .account-box p {
-            font-size: 16px;
-            margin: 5px 0;
-            display: block;
+            font-size: 18px;
+            margin: 8px 0;
+            text-align: left;
+            padding-left: 20px;
+        }
+        .account-box .product-name {
             text-align: center;
+            font-size: 20px;
+            margin-bottom: 15px;
+            padding-left: 0;
         }
-
-        .price {
-            font-size: 24px;
-            font-weight: bold;
+        .account-box .price {
+            text-align: center;
             color: #ffd700;
+            font-size: 24px;
             margin: 15px 0;
-            display: block;
+            padding-left: 0;
         }
-
         .button-container {
             position: absolute;
             bottom: 20px;
@@ -112,198 +87,132 @@
             gap: 10px;
             padding: 0 20px;
         }
-
-        .buy-button, .cart-button {
-            width: 100%;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
         .buy-button {
             background-color: #ffd700;
-            color: #000000;
+            color: black;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
         }
-
         .buy-button:hover {
-            background-color: #ffed4a;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+            background-color: #e6b800;
         }
-
         .cart-button {
             background-color: #28a745;
             color: white;
-        }
-
-        .cart-button:hover {
-            background-color: #2dbb4e;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
-        }
-
-        .cart-button i {
+            font-weight: bold;
             font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
         }
-
+        .cart-button:hover {
+            background-color: #218838;
+        }
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
             background-color: #28a745;
             color: white;
-            padding: 15px 25px;
+            padding: 15px 30px;
             border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             display: none;
             z-index: 1000;
-            animation: slideIn 0.3s ease-out;
+            animation: fadeIn 0.3s;
         }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Responsywność */
-        @media screen and (max-width: 768px) {
-            .content {
-                padding: 10px;
-            }
-
-            .content h1 {
-                font-size: 1.5rem;
-            }
-
-            .content p {
-                font-size: 1rem;
-            }
-
-            .account-box {
-                width: calc(100% - 30px);
-                margin: 10px;
-                padding: 15px;
-                padding-bottom: 140px;
-            }
-
-            .account-box p {
-                font-size: 14px;
-            }
-
-            .price {
-                font-size: 20px;
-            }
-
-            .button-container {
-                bottom: 15px;
-                padding: 0 15px;
-            }
-
-            .buy-button, .cart-button {
-                padding: 10px 12px;
-                font-size: 13px;
-            }
-        }
-
-        @media screen and (max-width: 480px) {
-            .content h1 {
-                font-size: 1.3rem;
-            }
-
-            .account-box {
-                padding: 12px;
-                padding-bottom: 130px;
-            }
-
-            .account-box p {
-                font-size: 13px;
-            }
-
-            .price {
-                font-size: 18px;
-            }
-
-            .button-container {
-                gap: 8px;
-            }
-
-            .buy-button, .cart-button {
-                padding: 8px 10px;
-                font-size: 12px;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-
     <div class="top-bar">
         <a href="home.html" class="home-button">Strona Główna</a>
     </div>
 
     <div class="content">
-        <h1>Kolekcja Kont Facebook Premium</h1>
-        <p>Wybierz konto dopasowane do Twoich potrzeb</p>
-
-        <div class="account-box">
-            <i class="fa-brands fa-facebook"></i>
-            <p><strong>Facebook Vintage 2009</strong></p>
-            <p>✦ Konto z długą historią</p>
-            <p>✦ Pełna weryfikacja</p>
-            <p>✦ Gwarancja bezpieczeństwa</p>
-            <p class="price">40 zł</p>
-            <div class="button-container">
-                <a href="kup.html?product=Konto%20Facebook%202009" class="buy-button">
-                    <i class="fas fa-shopping-bag"></i> Kup Teraz
-                </a>
-                <button onclick="addToCart('Konto Facebook 2009', 40)" class="cart-button">
-                    <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
-                </button>
-            </div>
-        </div>
-
-        <div class="account-box">
-            <i class="fa-brands fa-facebook"></i>
-            <p><strong>Facebook Premium 2012</strong></p>
-            <p>✦ Zweryfikowany profil</p>
-            <p>✦ Stabilna historia</p>
-            <p>✦ Pełny dostęp</p>
-            <p class="price">45 zł</p>
-            <div class="button-container">
-                <a href="kup.html?product=Konto%20Facebook%202012" class="buy-button">
-                    <i class="fas fa-shopping-bag"></i> Kup Teraz
-                </a>
-                <button onclick="addToCart('Konto Facebook 2012', 45)" class="cart-button">
-                    <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
-                </button>
-            </div>
-        </div>
+        <h1>Konta Facebook</h1>
+        <p>Wybierz odpowiednie konto dla siebie!</p>
+        <div id="facebook-accounts-container"></div>
     </div>
 
     <div id="notification" class="notification"></div>
 
     <script>
-        function addToCart(product, price) {
+        function displayFacebookAccounts() {
+            const container = document.getElementById('facebook-accounts-container');
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const facebookProducts = products.filter(p => p.type === 'facebook');
+
+            facebookProducts.forEach(product => {
+                const accountBox = document.createElement('div');
+                accountBox.className = 'account-box';
+
+                // Przygotuj wyświetlanie ceny
+                let priceDisplay = `${product.price} zł`;
+                if (product.promotion && product.promotion.enabled) {
+                    const endDate = new Date(product.promotion.endDate);
+                    if (endDate > new Date()) {
+                        priceDisplay = `
+                            <span style="text-decoration: line-through;">${product.price} zł</span>
+                            <span style="color: #ffd700; margin-left: 10px;">${product.promotion.price} zł</span>
+                            <br>
+                            <small style="color: #666;">Promocja do: ${endDate.toLocaleString()}</small>
+                        `;
+                    }
+                }
+
+                // Przygotuj wyświetlanie opisu
+                const descriptionLines = product.description.split('\n');
+                const descriptionHtml = descriptionLines
+                    .map(line => `<p>${line.trim().startsWith('✦') ? line.trim() : '✦ ' + line.trim()}</p>`)
+                    .join('');
+
+                accountBox.innerHTML = `
+                    <i class="fa-brands fa-facebook"></i>
+                    <p class="product-name"><strong>${product.name}</strong></p>
+                    ${descriptionHtml}
+                    <p class="price">${priceDisplay}</p>
+                    <div class="button-container">
+                        <a href="kup.html?product=${encodeURIComponent(product.name)}" class="buy-button">
+                            <i class="fas fa-shopping-bag"></i> KUP TERAZ
+                        </a>
+                        <button onclick="addToCart('${product.name}', ${product.price})" class="cart-button">
+                            <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
+                        </button>
+                    </div>
+                `;
+                container.appendChild(accountBox);
+            });
+        }
+
+        function addToCart(productName, basePrice) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const product = products.find(p => p.name === productName);
+            
+            let price = basePrice;
+            if (product.promotion && product.promotion.enabled) {
+                const endDate = new Date(product.promotion.endDate);
+                if (endDate > new Date()) {
+                    price = product.promotion.price;
+                }
+            }
+
             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
             cart.push({
                 id: Date.now(),
-                product: product,
+                product: productName,
                 price: price
             });
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -316,6 +225,9 @@
                 notification.style.display = 'none';
             }, 2000);
         }
+
+        // Wyświetl produkty przy załadowaniu strony
+        displayFacebookAccounts();
     </script>
 </body>
 </html>

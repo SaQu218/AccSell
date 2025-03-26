@@ -96,7 +96,7 @@
             text-decoration: none;
             display: inline-block;
             position: absolute;
-            bottom: 10px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             cursor: pointer;
@@ -105,27 +105,6 @@
         }
         .account-box .buy-button:hover {
             background-color: #e6b800;
-        }
-        .cart-button {
-            background-color: #28a745;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            cursor: pointer;
-            transition: background 0.3s ease;
-            width: 80%;
-        }
-        .cart-button:hover {
-            background-color: #218838;
         }
     </style>
 </head>
@@ -143,9 +122,6 @@
             <p id="product-name" class="product-name"><strong>Ładowanie...</strong></p>
             <div id="product-description"></div>
             <p id="product-price" class="price">Ładowanie...</p>
-            <button class="cart-button" onclick="addToCart()">
-                <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
-            </button>
             <button class="buy-button" onclick="buyProduct()">
                 <i class="fas fa-shopping-bag"></i> KUP TERAZ
             </button>
@@ -295,42 +271,6 @@
                 console.error('Błąd podczas tworzenia sesji płatności:', error);
                 alert(`Wystąpił błąd podczas tworzenia sesji płatności: ${error.message}`);
             }
-        }
-
-        function addToCart() {
-            const product = getQueryParam('product');
-            if (!product) {
-                alert('Nie wybrano produktu!');
-                return;
-            }
-
-            const products = JSON.parse(localStorage.getItem('products')) || [];
-            const selectedProduct = products.find(p => p.name === product);
-
-            if (!selectedProduct) {
-                alert('Nie znaleziono produktu!');
-                return;
-            }
-
-            // Sprawdź czy produkt ma aktywną promocję
-            let price = selectedProduct.price;
-            if (selectedProduct.promotion && selectedProduct.promotion.enabled) {
-                const endDate = new Date(selectedProduct.promotion.endDate);
-                if (endDate > new Date()) {
-                    price = selectedProduct.promotion.price;
-                }
-            }
-
-            // Dodaj do koszyka
-            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            cart.push({
-                id: Date.now(),
-                product: product,
-                price: price
-            });
-            localStorage.setItem('cart', JSON.stringify(cart));
-            
-            alert('Produkt został dodany do koszyka!');
         }
     </script>
 </body>
