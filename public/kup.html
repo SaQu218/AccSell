@@ -128,6 +128,93 @@
         </div>
     </div>
 
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="product-details card">
+                    <div class="card-body">
+                        <h2 id="productName" class="card-title"></h2>
+                        <p id="productDescription" class="card-text"></p>
+                        <p id="productPrice" class="card-text"></p>
+                        <button onclick="buyProduct()" class="btn btn-primary">KUP TERAZ</button>
+                    </div>
+                </div>
+
+                <!-- System ocen -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h3>Oceny i opinie</h3>
+                        <div id="reviewForm" class="mb-4">
+                            <div class="mb-3">
+                                <label for="rating" class="form-label">Twoja ocena</label>
+                                <select class="form-select" id="rating">
+                                    <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4)</option>
+                                    <option value="3">⭐⭐⭐ (3)</option>
+                                    <option value="2">⭐⭐ (2)</option>
+                                    <option value="1">⭐ (1)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reviewText" class="form-label">Twoja opinia</label>
+                                <textarea class="form-control" id="reviewText" rows="3"></textarea>
+                            </div>
+                            <button onclick="submitReview()" class="btn btn-primary">Dodaj opinię</button>
+                        </div>
+                        <div id="reviewsList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Często zadawane pytania</h3>
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        Jak długo trwa realizacja zamówienia?
+                                    </button>
+                                </h2>
+                                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Realizacja zamówienia następuje automatycznie po zaksięgowaniu płatności.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        Czy otrzymam dane do logowania?
+                                    </button>
+                                </h2>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Tak, dane do logowania zostaną wysłane na podany adres email natychmiast po potwierdzeniu płatności.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        Co w przypadku problemów z kontem?
+                                    </button>
+                                </h2>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        W przypadku jakichkolwiek problemów prosimy o kontakt z naszym wsparciem. Gwarantujemy pomoc lub zwrot środków.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -272,6 +359,75 @@
                 alert(`Wystąpił błąd podczas tworzenia sesji płatności: ${error.message}`);
             }
         }
+
+        // System ocen
+        let reviews = JSON.parse(localStorage.getItem('reviews') || '{}');
+
+        function submitReview() {
+            const rating = document.getElementById('rating').value;
+            const text = document.getElementById('reviewText').value;
+            const productId = new URLSearchParams(window.location.search).get('id');
+            
+            if (!text.trim()) {
+                alert('Proszę napisać opinię przed wysłaniem!');
+                return;
+            }
+
+            if (!reviews[productId]) {
+                reviews[productId] = [];
+            }
+
+            const review = {
+                rating: parseInt(rating),
+                text: text,
+                date: new Date().toISOString(),
+                id: Date.now()
+            };
+
+            reviews[productId].push(review);
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+            
+            document.getElementById('reviewText').value = '';
+            displayReviews();
+        }
+
+        function displayReviews() {
+            const productId = new URLSearchParams(window.location.search).get('id');
+            const productReviews = reviews[productId] || [];
+            const reviewsList = document.getElementById('reviewsList');
+            
+            if (productReviews.length === 0) {
+                reviewsList.innerHTML = '<p class="text-muted">Brak opinii dla tego produktu.</p>';
+                return;
+            }
+
+            const averageRating = productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length;
+            
+            reviewsList.innerHTML = `
+                <div class="mb-3">
+                    <h4>Średnia ocena: ${averageRating.toFixed(1)} ⭐</h4>
+                    <p>Liczba opinii: ${productReviews.length}</p>
+                </div>
+                <div class="reviews-list">
+                    ${productReviews.map(review => `
+                        <div class="review-item mb-3 p-3 border rounded">
+                            <div class="stars">
+                                ${'⭐'.repeat(review.rating)}
+                            </div>
+                            <p class="mb-1">${review.text}</p>
+                            <small class="text-muted">
+                                ${new Date(review.date).toLocaleString()}
+                            </small>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Wywołaj wyświetlanie opinii przy ładowaniu strony
+        window.addEventListener('load', () => {
+            displayReviews();
+        });
     </script>
 </body>
 </html>

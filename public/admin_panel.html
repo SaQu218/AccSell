@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,9 +27,58 @@
         .edit-btn {
             color: #0d6efd;
         }
+        .theme-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .card-body {
+                padding: 15px;
+            }
+            .row.g-3 {
+                gap: 10px !important;
+            }
+            .col-md-4, .col-md-6, .col-md-2 {
+                width: 100%;
+            }
+        }
+        /* Animacje */
+        .list-group-item {
+            transition: all 0.3s ease;
+        }
+        .list-group-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        /* Style dla ciemnego motywu */
+        [data-bs-theme="dark"] {
+            background-color: #212529;
+            color: #fff;
+        }
+        [data-bs-theme="dark"] .card {
+            background-color: #2c3034;
+            border-color: #373b3e;
+        }
+        [data-bs-theme="dark"] .list-group-item {
+            background-color: #2c3034;
+            border-color: #373b3e;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
+    <!-- Przełącznik motywu -->
+    <div class="theme-switch">
+        <button class="btn btn-outline-primary" id="themeToggle">
+            <i class="bi bi-moon-stars"></i> Zmień motyw
+        </button>
+    </div>
+
     <!-- Modal do wprowadzania hasła -->
     <div class="modal fade" id="adminPasswordModal" tabindex="-1">
         <div class="modal-dialog">
@@ -116,6 +165,220 @@
 
     <div class="container">
         <h1 class="mb-4">Panel Administratora</h1>
+        <div class="product-form">
+            <form id="productForm">
+                <div class="mb-3">
+                    <label class="form-label">Typ produktu</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="productType" id="steam" value="steam" checked>
+                        <label class="form-check-label" for="steam">
+                            Konto Steam
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="productType" id="instagram" value="instagram">
+                        <label class="form-check-label" for="instagram">
+                            Konto Instagram
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="productType" id="facebook" value="facebook">
+                        <label class="form-check-label" for="facebook">
+                            Konto Facebook
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="productName" class="form-label">Nazwa produktu</label>
+                    <input type="text" class="form-control" id="productName" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="productDescription" class="form-label">Opis produktu</label>
+                    <small class="form-text text-muted d-block">Każdą linię opisu zacznij od "✦ ". Przykład:<br>✦ Długa historia<br>✦ Pełna weryfikacja<br>✦ Gwarancja bezpieczeństwa</small>
+                    <textarea class="form-control mt-2" id="productDescription" rows="3" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="productPrice" class="form-label">Cena (PLN)</label>
+                    <input type="number" class="form-control" id="productPrice" required>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="productPromotion" onchange="togglePromotionFields()">
+                        <label class="form-check-label" for="productPromotion">
+                            Włącz promocję
+                        </label>
+                    </div>
+                </div>
+
+                <div id="promotionFields" style="display: none;">
+                    <div class="mb-3">
+                        <label for="promotionPrice" class="form-label">Cena promocyjna (PLN)</label>
+                        <input type="number" class="form-control" id="promotionPrice">
+                    </div>
+                    <div class="mb-3">
+                        <label for="promotionEndDate" class="form-label">Data zakończenia promocji</label>
+                        <input type="datetime-local" class="form-control" id="promotionEndDate">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Dodaj produkt</button>
+            </form>
+        </div>
+
+        <div class="mt-4">
+            <h2>Lista produktów</h2>
+            <div id="productList" class="list-group mt-3">
+                <!-- Tu będą wyświetlane dodane produkty -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <h2>Panel Administratora</h2>
+        
+        <!-- Sekcja wyszukiwania i filtrowania -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Wyszukiwanie i filtrowanie</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Szukaj po nazwie...">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" id="minPrice" class="form-control" placeholder="Cena od">
+                            </div>
+                            <div class="col">
+                                <input type="number" id="maxPrice" class="form-control" placeholder="Cena do">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select id="sortSelect" class="form-select">
+                            <option value="default">Sortowanie</option>
+                            <option value="priceAsc">Cena: rosnąco</option>
+                            <option value="priceDesc">Cena: malejąco</option>
+                            <option value="nameAsc">Nazwa: A-Z</option>
+                            <option value="nameDesc">Nazwa: Z-A</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reszta kodu -->
+        <div class="product-form">
+            <form id="productForm">
+                <div class="mb-3">
+                    <label class="form-label">Typ produktu</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="productType" id="steam" value="steam" checked>
+                        <label class="form-check-label" for="steam">
+                            Konto Steam
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="productType" id="instagram" value="instagram">
+                        <label class="form-check-label" for="instagram">
+                            Konto Instagram
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="productType" id="facebook" value="facebook">
+                        <label class="form-check-label" for="facebook">
+                            Konto Facebook
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="productName" class="form-label">Nazwa produktu</label>
+                    <input type="text" class="form-control" id="productName" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="productDescription" class="form-label">Opis produktu</label>
+                    <small class="form-text text-muted d-block">Każdą linię opisu zacznij od "✦ ". Przykład:<br>✦ Długa historia<br>✦ Pełna weryfikacja<br>✦ Gwarancja bezpieczeństwa</small>
+                    <textarea class="form-control mt-2" id="productDescription" rows="3" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="productPrice" class="form-label">Cena (PLN)</label>
+                    <input type="number" class="form-control" id="productPrice" required>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="productPromotion" onchange="togglePromotionFields()">
+                        <label class="form-check-label" for="productPromotion">
+                            Włącz promocję
+                        </label>
+                    </div>
+                </div>
+
+                <div id="promotionFields" style="display: none;">
+                    <div class="mb-3">
+                        <label for="promotionPrice" class="form-label">Cena promocyjna (PLN)</label>
+                        <input type="number" class="form-control" id="promotionPrice">
+                    </div>
+                    <div class="mb-3">
+                        <label for="promotionEndDate" class="form-label">Data zakończenia promocji</label>
+                        <input type="datetime-local" class="form-control" id="promotionEndDate">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Dodaj produkt</button>
+            </form>
+        </div>
+
+        <div class="mt-4">
+            <h2>Lista produktów</h2>
+            <div id="productList" class="list-group mt-3">
+                <!-- Tu będą wyświetlane dodane produkty -->
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <h2>Panel Administratora</h2>
+        
+        <!-- Sekcja wyszukiwania i filtrowania -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Wyszukiwanie i filtrowanie</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Szukaj po nazwie...">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" id="minPrice" class="form-control" placeholder="Cena od">
+                            </div>
+                            <div class="col">
+                                <input type="number" id="maxPrice" class="form-control" placeholder="Cena do">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select id="sortSelect" class="form-select">
+                            <option value="default">Sortowanie</option>
+                            <option value="priceAsc">Cena: rosnąco</option>
+                            <option value="priceDesc">Cena: malejąco</option>
+                            <option value="nameAsc">Nazwa: A-Z</option>
+                            <option value="nameDesc">Nazwa: Z-A</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reszta kodu -->
         <div class="product-form">
             <form id="productForm">
                 <div class="mb-3">
@@ -491,10 +754,203 @@
                 <p><strong>Cena:</strong> ${priceDisplay}</p>
             `;
             productList.appendChild(productElement);
+            productElement.style.opacity = '0';
+            setTimeout(() => {
+                productElement.style.opacity = '1';
+            }, 10);
         }
 
         // Wyświetl produkty przy starcie
         displayProducts();
+
+        // Funkcje filtrowania i sortowania
+        function filterAndSortProducts() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+            const sortType = document.getElementById('sortSelect').value;
+
+            // Czyścimy listę produktów
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+
+            // Filtrujemy i sortujemy produkty
+            let filteredProducts = products.filter(product => {
+                const price = product.promotion?.enabled ? product.promotion.price : product.price;
+                return product.name.toLowerCase().includes(searchText) &&
+                       price >= minPrice &&
+                       (maxPrice === Infinity || price <= maxPrice);
+            });
+
+            // Sortowanie
+            switch(sortType) {
+                case 'priceAsc':
+                    filteredProducts.sort((a, b) => {
+                        const priceA = a.promotion?.enabled ? a.promotion.price : a.price;
+                        const priceB = b.promotion?.enabled ? b.promotion.price : b.price;
+                        return priceA - priceB;
+                    });
+                    break;
+                case 'priceDesc':
+                    filteredProducts.sort((a, b) => {
+                        const priceA = a.promotion?.enabled ? a.promotion.price : a.price;
+                        const priceB = b.promotion?.enabled ? b.promotion.price : b.price;
+                        return priceB - priceA;
+                    });
+                    break;
+                case 'nameAsc':
+                    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'nameDesc':
+                    filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+                    break;
+            }
+
+            // Wyświetlamy przefiltrowane i posortowane produkty
+            filteredProducts.forEach(product => addProductToList(product));
+        }
+
+        // Dodajemy nasłuchiwanie zdarzeń
+        document.getElementById('searchInput').addEventListener('input', filterAndSortProducts);
+        document.getElementById('minPrice').addEventListener('input', filterAndSortProducts);
+        document.getElementById('maxPrice').addEventListener('input', filterAndSortProducts);
+        document.getElementById('sortSelect').addEventListener('change', filterAndSortProducts);
+
+        // Obsługa przełączania motywu
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        // Sprawdź zapisany motyw
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-bs-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Aktualizuj ikonę przycisku
+            themeToggle.innerHTML = `<i class="bi bi-${newTheme === 'light' ? 'sun' : 'moon-stars'}"></i> Zmień motyw`;
+        });
+
+        // System logowania działań
+        const adminLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
+
+        function logAdminAction(action, details) {
+            const log = {
+                timestamp: new Date().toISOString(),
+                action: action,
+                details: details
+            };
+            adminLogs.push(log);
+            localStorage.setItem('adminLogs', JSON.stringify(adminLogs));
+        }
+
+        // System kopii zapasowych
+        function createBackup() {
+            const backup = {
+                timestamp: new Date().toISOString(),
+                products: products,
+                logs: adminLogs
+            };
+            const backups = JSON.parse(localStorage.getItem('backups') || '[]');
+            backups.push(backup);
+            // Zachowaj maksymalnie 10 ostatnich kopii
+            if (backups.length > 10) {
+                backups.shift();
+            }
+            localStorage.setItem('backups', JSON.stringify(backups));
+            return backup;
+        }
+
+        function restoreBackup(timestamp) {
+            const backups = JSON.parse(localStorage.getItem('backups') || '[]');
+            const backup = backups.find(b => b.timestamp === timestamp);
+            if (backup) {
+                products = backup.products;
+                localStorage.setItem('products', JSON.stringify(products));
+                displayProducts();
+                return true;
+            }
+            return false;
+        }
+
+        // Dodaj przycisk kopii zapasowej do interfejsu
+        const backupButton = document.createElement('button');
+        backupButton.className = 'btn btn-secondary ms-2';
+        backupButton.innerHTML = '<i class="bi bi-cloud-upload"></i> Kopia zapasowa';
+        backupButton.onclick = () => {
+            const backup = createBackup();
+            logAdminAction('backup_created', { timestamp: backup.timestamp });
+            alert('Utworzono kopię zapasową!');
+        };
+        document.querySelector('.theme-switch').appendChild(backupButton);
+
+        // Modyfikacja istniejących funkcji, aby dodać logowanie
+        const originalAddProductToList = addProductToList;
+        addProductToList = (product) => {
+            originalAddProductToList(product);
+            logAdminAction('product_added', {
+                id: product.id,
+                name: product.name,
+                type: product.type
+            });
+        };
+
+        const originalDeleteProduct = deleteProduct;
+        deleteProduct = (productId) => {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                logAdminAction('product_deleted', {
+                    id: productId,
+                    name: product.name,
+                    type: product.type
+                });
+            }
+            originalDeleteProduct(productId);
+        };
+
+        // Dodaj przycisk do wyświetlania logów
+        const logsButton = document.createElement('button');
+        logsButton.className = 'btn btn-info ms-2';
+        logsButton.innerHTML = '<i class="bi bi-journal-text"></i> Logi';
+        logsButton.onclick = () => {
+            const logsHtml = adminLogs.map(log => `
+                <div class="log-entry">
+                    <strong>${new Date(log.timestamp).toLocaleString()}</strong>
+                    <br>
+                    Akcja: ${log.action}
+                    <br>
+                    Szczegóły: ${JSON.stringify(log.details)}
+                </div>
+            `).join('<hr>');
+            
+            const modal = new bootstrap.Modal(document.getElementById('logsModal'));
+            document.getElementById('logsContent').innerHTML = logsHtml;
+            modal.show();
+        };
+        document.querySelector('.theme-switch').appendChild(logsButton);
+
+        // Dodaj modal do wyświetlania logów
+        const logsModal = document.createElement('div');
+        logsModal.className = 'modal fade';
+        logsModal.id = 'logsModal';
+        logsModal.innerHTML = `
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Logi administratora</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="logsContent" style="max-height: 500px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(logsModal);
     </script>
 </body>
 </html> 
