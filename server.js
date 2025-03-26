@@ -137,6 +137,8 @@ const userSchema = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
+    ip: String,
+    lastLoginIp: String
 });
 
 const Users = mongoose.model('Dane', userSchema);
@@ -147,6 +149,7 @@ app.get('/', (req, res) => {
 
 app.post('/register', async (req, res) => {
     const { username, email, password, confirm_password } = req.body;
+    const userIp = req.ip || req.connection.remoteAddress;
 
     if (password !== confirm_password) {
         return res.send('Hasła nie są takie same!');
@@ -163,12 +166,14 @@ app.post('/register', async (req, res) => {
         username,
         email,
         password: hashedPassword,
+        ip: userIp,
+        lastLoginIp: userIp
     });
 
     try {
         await user.save();
         console.log('Użytkownik zapisany:', user);
-        res.redirect('/welcome.html');  // Zmieniono na .html
+        res.redirect('/welcome.html');
     } catch (err) {
         console.error(err);
         res.send('Wystąpił błąd podczas zapisywania użytkownika');
@@ -177,6 +182,8 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
+    const userIp = req.ip || req.connection.remoteAddress;
+
     try {
         const user = await Users.findOne({ username });
 
@@ -188,6 +195,10 @@ app.post('/login', async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: 'Nieprawidłowe hasło' });
         }
+
+        // Aktualizuj IP użytkownika
+        user.lastLoginIp = userIp;
+        await user.save();
 
         // Generujemy token JWT
         const token = jwt.sign(
