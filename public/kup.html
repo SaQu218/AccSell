@@ -445,7 +445,12 @@
                 return;
             }
 
-            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            // Pobierz opinie z localStorage i upewnij się, że to tablica
+            let reviews = JSON.parse(localStorage.getItem('reviews'));
+            if (!Array.isArray(reviews)) {
+                reviews = [];
+            }
+
             const review = {
                 product: product,
                 rating: parseInt(rating),
