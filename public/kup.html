@@ -383,30 +383,30 @@
         }
 
         // System ocen
-        let reviews = JSON.parse(localStorage.getItem('reviews') || '{}');
-
         function submitReview() {
             const rating = document.getElementById('rating').value;
-            const text = document.getElementById('reviewText').value;
-            const productId = new URLSearchParams(window.location.search).get('id');
+            const comment = document.getElementById('reviewText').value;
+            const name = prompt('Podaj swoje imię:');
             
-            if (!text.trim()) {
+            if (!name) {
+                alert('Proszę podać imię!');
+                return;
+            }
+
+            if (!comment.trim()) {
                 alert('Proszę napisać opinię przed wysłaniem!');
                 return;
             }
 
-            if (!reviews[productId]) {
-                reviews[productId] = [];
-            }
-
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
             const review = {
+                name: name,
                 rating: parseInt(rating),
-                text: text,
-                date: new Date().toISOString(),
-                id: Date.now()
+                comment: comment,
+                date: new Date().toISOString()
             };
 
-            reviews[productId].push(review);
+            reviews.push(review);
             localStorage.setItem('reviews', JSON.stringify(reviews));
             
             document.getElementById('reviewText').value = '';
@@ -414,29 +414,29 @@
         }
 
         function displayReviews() {
-            const productId = new URLSearchParams(window.location.search).get('id');
-            const productReviews = reviews[productId] || [];
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
             const reviewsList = document.getElementById('reviewsList');
             
-            if (productReviews.length === 0) {
-                reviewsList.innerHTML = '<p class="text-muted">Brak opinii dla tego produktu.</p>';
+            if (reviews.length === 0) {
+                reviewsList.innerHTML = '<p class="text-muted">Brak opinii.</p>';
                 return;
             }
 
-            const averageRating = productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length;
+            const averageRating = reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
             
             reviewsList.innerHTML = `
                 <div class="mb-3">
                     <h4>Średnia ocena: ${averageRating.toFixed(1)} ⭐</h4>
-                    <p>Liczba opinii: ${productReviews.length}</p>
+                    <p>Liczba opinii: ${reviews.length}</p>
                 </div>
                 <div class="reviews-list">
-                    ${productReviews.map(review => `
+                    ${reviews.map(review => `
                         <div class="review-item mb-3 p-3 border rounded">
+                            <h5>${review.name}</h5>
                             <div class="stars">
-                                ${'⭐'.repeat(review.rating)}
+                                ${'⭐'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
                             </div>
-                            <p class="mb-1">${review.text}</p>
+                            <p class="mb-1">${review.comment}</p>
                             <small class="text-muted">
                                 ${new Date(review.date).toLocaleString()}
                             </small>

@@ -884,11 +884,15 @@
                 reviews.splice(index, 1);
                 localStorage.setItem('reviews', JSON.stringify(reviews));
                 displayReviews();
+                logAdminAction('review_deleted', { index: index });
             }
         }
 
         // Wyświetl opinie przy załadowaniu strony
-        displayReviews();
+        document.addEventListener('DOMContentLoaded', () => {
+            displayProducts();
+            displayReviews();
+        });
 
         // Obsługa przełączania zakładek
         document.querySelectorAll('.nav-link').forEach(link => {
