@@ -54,25 +54,28 @@ app.use((req, res, next) => {
 });
 
 app.post('/api/create-checkout-session', async (req, res) => {
-    const { product } = req.body;
-    
-    // Słownik cen dla różnych produktów
-    const prices = {
-        'Konto Facebook 2009': 4000, // 40 zł w groszach
-        'Konto Facebook 2012': 4500, // 45 zł w groszach
-        'Konto Instagram 50k Follow': 4000, // 40 zł w groszach
-        'Konto Instagram 195K Follow': 18000, // 180 zł w groszach
-        'Konto Steam 2009': 12000, // 120 zł w groszach
-        'Konto Steam 2019': 5000, // 50 zł w groszach
-        'Konto Steam 2023 prime cs2': 9000 // 90 zł w groszach
-    };
-
-    const price = prices[product];
-    if (!price) {
-        return res.status(400).json({ error: 'Nieprawidłowy produkt' });
-    }
+    const { product, price } = req.body;
     
     try {
+        // Pobierz produkty z localStorage
+        const products = JSON.parse(req.headers['x-products'] || '[]');
+        const selectedProduct = products.find(p => p.name === product);
+
+        if (!selectedProduct) {
+            return res.status(400).json({ error: 'Nieprawidłowy produkt' });
+        }
+
+        // Użyj ceny promocyjnej jeśli jest dostępna i aktywna
+        let finalPrice = price;
+        if (selectedProduct.promotion && selectedProduct.promotion.enabled) {
+            const endDate = new Date(selectedProduct.promotion.endDate);
+            if (endDate > new Date()) {
+                finalPrice = selectedProduct.promotion.price;
+            }
+        }
+
+        const priceInGrosz = Math.round(finalPrice * 100); // Konwertuj na grosze
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [
@@ -82,7 +85,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
                         product_data: {
                             name: product,
                         },
-                        unit_amount: price,
+                        unit_amount: priceInGrosz,
                     },
                     quantity: 1,
                 },
@@ -92,7 +95,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
             cancel_url: `${process.env.BASE_URL}/cancel.html`,
         });
 
-        res.status(200).json({ id: session.id });
+        res.status(200).json({ id: session.id, url: session.url });
     } catch (error) {
         console.error('Błąd podczas tworzenia sesji Stripe:', error.message);
         res.status(500).json({ error: error.message });

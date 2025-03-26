@@ -116,24 +116,41 @@
                 return;
             }
 
-            const prices = {
-                'Konto Facebook 2009': 40,
-                'Konto Facebook 2012': 45,
-                'Konto Instagram 50k Follow': 40,
-                'Konto Instagram 195K Follow': 180,
-                'Konto Steam 2009': 120,
-                'Konto Steam 2019': 50,
-                'Konto Steam 2023 prime cs2': 90
-            };
+            // Pobierz produkty z localStorage
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const selectedProduct = products.find(p => p.name === product);
+
+            if (!selectedProduct) {
+                window.location.href = 'konto_fb.html';
+                return;
+            }
 
             document.getElementById('product-name').innerHTML = `<strong>${product}</strong>`;
-            document.getElementById('product-price').innerHTML = `<strong>${prices[product]} zł</strong>`;
+            
+            // Sprawdź czy produkt ma aktywną promocję
+            let priceDisplay = `${selectedProduct.price} zł`;
+            if (selectedProduct.promotion && selectedProduct.promotion.enabled) {
+                const endDate = new Date(selectedProduct.promotion.endDate);
+                if (endDate > new Date()) {
+                    priceDisplay = `
+                        <span style="text-decoration: line-through;">${selectedProduct.price} zł</span>
+                        <span style="color: red; margin-left: 10px;">${selectedProduct.promotion.price} zł</span>
+                        <br>
+                        <small style="color: #666;">Promocja do: ${endDate.toLocaleString()}</small>
+                    `;
+                } else {
+                    // Promocja wygasła - usuń ją
+                    selectedProduct.promotion = null;
+                    localStorage.setItem('products', JSON.stringify(products));
+                }
+            }
+            document.getElementById('product-price').innerHTML = `<strong>${priceDisplay}</strong>`;
 
             // Ustawienie odpowiedniej ikony w zależności od typu produktu
             let iconClass = 'fa-facebook';
-            if (product.includes('Instagram')) {
+            if (selectedProduct.type === 'instagram') {
                 iconClass = 'fa-instagram';
-            } else if (product.includes('Steam')) {
+            } else if (selectedProduct.type === 'steam') {
                 iconClass = 'fa-steam';
             }
             document.querySelector('.account-box i').className = `fa-brands ${iconClass}`;
@@ -148,23 +165,44 @@
                 return;
             }
 
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const selectedProduct = products.find(p => p.name === product);
+
+            if (!selectedProduct) {
+                alert('Nie znaleziono produktu!');
+                return;
+            }
+
+            // Sprawdź czy produkt ma aktywną promocję
+            let price = selectedProduct.price;
+            if (selectedProduct.promotion && selectedProduct.promotion.enabled) {
+                const endDate = new Date(selectedProduct.promotion.endDate);
+                if (endDate > new Date()) {
+                    price = selectedProduct.promotion.price;
+                } else {
+                    // Promocja wygasła - usuń ją
+                    selectedProduct.promotion = null;
+                    localStorage.setItem('products', JSON.stringify(products));
+                }
+            }
+
             const response = await fetch('/api/create-checkout-session', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-products': JSON.stringify(products)
                 },
-                body: JSON.stringify({ product: product })
+                body: JSON.stringify({ 
+                    product: product,
+                    price: price
+                })
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                const stripeSessionId = data.id;
-                const stripe = Stripe('pk_test_51R2HeHDFinv4XW4HiOmJ9xDiLsit5j9GS31hAgOZk7II5KlzaSFW1hnB2U0NWcnjNzwZHtwSXzbPgvIjCqATN9SE00RjiI8n5r');
-                stripe.redirectToCheckout({ sessionId: stripeSessionId });
+            const data = await response.json();
+            if (data.id) {
+                window.location.href = data.url;
             } else {
-                const errorData = await response.json();
-                console.error('Błąd podczas tworzenia sesji płatności:', errorData);
-                alert('Błąd podczas tworzenia sesji płatności. Sprawdź konsolę, aby uzyskać więcej informacji.');
+                alert('Wystąpił błąd podczas tworzenia sesji płatności!');
             }
         }
     </script>

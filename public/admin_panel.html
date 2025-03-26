@@ -86,6 +86,24 @@
                             <label for="editProductPrice" class="form-label">Cena (PLN)</label>
                             <input type="number" class="form-control" id="editProductPrice" required>
                         </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="editProductPromotion" onchange="toggleEditPromotionFields()">
+                                <label class="form-check-label" for="editProductPromotion">
+                                    Włącz promocję
+                                </label>
+                            </div>
+                        </div>
+                        <div id="editPromotionFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="editPromotionPrice" class="form-label">Cena promocyjna (PLN)</label>
+                                <input type="number" class="form-control" id="editPromotionPrice">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editPromotionEndDate" class="form-label">Data zakończenia promocji</label>
+                                <input type="datetime-local" class="form-control" id="editPromotionEndDate">
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -125,6 +143,26 @@
                 <div class="mb-3">
                     <label for="productPrice" class="form-label">Cena (PLN)</label>
                     <input type="number" class="form-control" id="productPrice" required>
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="productPromotion" onchange="togglePromotionFields()">
+                        <label class="form-check-label" for="productPromotion">
+                            Włącz promocję
+                        </label>
+                    </div>
+                </div>
+
+                <div id="promotionFields" style="display: none;">
+                    <div class="mb-3">
+                        <label for="promotionPrice" class="form-label">Cena promocyjna (PLN)</label>
+                        <input type="number" class="form-control" id="promotionPrice">
+                    </div>
+                    <div class="mb-3">
+                        <label for="promotionEndDate" class="form-label">Data zakończenia promocji</label>
+                        <input type="datetime-local" class="form-control" id="promotionEndDate">
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Dodaj produkt</button>
@@ -191,6 +229,18 @@
         let productDataToAdd = null;
         const adminModal = new bootstrap.Modal(document.getElementById('adminPasswordModal'));
 
+        function togglePromotionFields() {
+            const promotionFields = document.getElementById('promotionFields');
+            const isPromotionEnabled = document.getElementById('productPromotion').checked;
+            promotionFields.style.display = isPromotionEnabled ? 'block' : 'none';
+        }
+
+        function toggleEditPromotionFields() {
+            const promotionFields = document.getElementById('editPromotionFields');
+            const isPromotionEnabled = document.getElementById('editProductPromotion').checked;
+            promotionFields.style.display = isPromotionEnabled ? 'block' : 'none';
+        }
+
         document.getElementById('productForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -198,13 +248,19 @@
             const productName = document.getElementById('productName').value;
             const productDescription = document.getElementById('productDescription').value;
             const productPrice = document.getElementById('productPrice').value;
+            const isPromotionEnabled = document.getElementById('productPromotion').checked;
 
             productDataToAdd = {
                 id: Date.now(),
                 type: productType,
                 name: productName,
                 description: productDescription,
-                price: parseFloat(productPrice)
+                price: parseFloat(productPrice),
+                promotion: isPromotionEnabled ? {
+                    enabled: true,
+                    price: parseFloat(document.getElementById('promotionPrice').value),
+                    endDate: document.getElementById('promotionEndDate').value
+                } : null
             };
 
             adminModal.show();
@@ -244,14 +300,23 @@
 
             editingProductId = productId;
             
-            // Wypełnij formularz danymi produktu
             document.getElementById('editProductId').value = product.id;
             document.querySelector(`input[name="editProductType"][value="${product.type}"]`).checked = true;
             document.getElementById('editProductName').value = product.name;
             document.getElementById('editProductDescription').value = product.description;
             document.getElementById('editProductPrice').value = product.price;
+            
+            // Ustawienie pól promocji
+            const hasPromotion = product.promotion && product.promotion.enabled;
+            document.getElementById('editProductPromotion').checked = hasPromotion;
+            if (hasPromotion) {
+                document.getElementById('editPromotionPrice').value = product.promotion.price;
+                document.getElementById('editPromotionEndDate').value = product.promotion.endDate;
+                document.getElementById('editPromotionFields').style.display = 'block';
+            } else {
+                document.getElementById('editPromotionFields').style.display = 'none';
+            }
 
-            // Pokaż modal
             editProductModal.show();
         }
 
@@ -260,30 +325,55 @@
             const productIndex = products.findIndex(p => p.id === editingProductId);
             if (productIndex === -1) return;
 
+            const isPromotionEnabled = document.getElementById('editProductPromotion').checked;
             const updatedProduct = {
                 id: editingProductId,
                 type: document.querySelector('input[name="editProductType"]:checked').value,
                 name: document.getElementById('editProductName').value,
                 description: document.getElementById('editProductDescription').value,
-                price: parseFloat(document.getElementById('editProductPrice').value)
+                price: parseFloat(document.getElementById('editProductPrice').value),
+                promotion: isPromotionEnabled ? {
+                    enabled: true,
+                    price: parseFloat(document.getElementById('editPromotionPrice').value),
+                    endDate: document.getElementById('editPromotionEndDate').value
+                } : null
             };
 
-            // Aktualizuj produkt w tablicy
             products[productIndex] = updatedProduct;
-            
-            // Zapisz do localStorage
             localStorage.setItem('products', JSON.stringify(products));
-            
-            // Zamknij modal i odśwież listę
             editProductModal.hide();
             displayProducts();
-            
             alert('Produkt został zaktualizowany!');
         });
+
+        // Funkcja do sprawdzania i aktualizowania statusu promocji
+        function checkAndUpdatePromotions() {
+            const currentDate = new Date();
+            let hasChanges = false;
+
+            products = products.map(product => {
+                if (product.promotion && product.promotion.enabled) {
+                    const endDate = new Date(product.promotion.endDate);
+                    if (endDate <= currentDate) {
+                        // Promocja wygasła
+                        product.promotion = null;
+                        hasChanges = true;
+                    }
+                }
+                return product;
+            });
+
+            if (hasChanges) {
+                localStorage.setItem('products', JSON.stringify(products));
+            }
+        }
 
         function displayProducts() {
             const productList = document.getElementById('productList');
             productList.innerHTML = '';
+            
+            // Sprawdź i zaktualizuj status promocji przed wyświetleniem
+            checkAndUpdatePromotions();
             
             const steamProducts = products.filter(p => p.type === 'steam');
             const instagramProducts = products.filter(p => p.type === 'instagram');
@@ -303,6 +393,20 @@
             const productList = document.getElementById('productList');
             const productElement = document.createElement('div');
             productElement.className = 'list-group-item';
+            
+            let priceDisplay = `${product.price} PLN`;
+            if (product.promotion && product.promotion.enabled) {
+                const endDate = new Date(product.promotion.endDate);
+                if (endDate > new Date()) {
+                    priceDisplay = `
+                        <span style="text-decoration: line-through;">${product.price} PLN</span>
+                        <span style="color: red; margin-left: 10px;">${product.promotion.price} PLN</span>
+                        <br>
+                        <small style="color: #666;">Promocja do: ${endDate.toLocaleString()}</small>
+                    `;
+                }
+            }
+
             productElement.innerHTML = `
                 <h5>${product.name} 
                     <span class="delete-btn" onclick="deleteProduct(${product.id})">❌</span>
@@ -310,7 +414,7 @@
                 </h5>
                 <p><strong>Typ:</strong> ${product.type === 'steam' ? 'Steam' : 'Instagram'}</p>
                 <p><strong>Opis:</strong> ${product.description}</p>
-                <p><strong>Cena:</strong> ${product.price} PLN</p>
+                <p><strong>Cena:</strong> ${priceDisplay}</p>
             `;
             productList.appendChild(productElement);
         }
