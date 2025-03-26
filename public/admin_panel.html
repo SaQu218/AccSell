@@ -199,113 +199,8 @@
 
     <div class="container">
         <h1 class="mb-4">Panel Administratora</h1>
-        <div class="product-form">
-            <form id="productForm">
-                <div class="mb-3">
-                    <label class="form-label">Typ produktu</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="steam" value="steam" checked>
-                        <label class="form-check-label" for="steam">
-                            Konto Steam
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="instagram" value="instagram">
-                        <label class="form-check-label" for="instagram">
-                            Konto Instagram
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="facebook" value="facebook">
-                        <label class="form-check-label" for="facebook">
-                            Konto Facebook
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="productName" class="form-label">Nazwa produktu</label>
-                    <input type="text" class="form-control" id="productName" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="productDescription" class="form-label">Opis produktu</label>
-                    <small class="form-text text-muted d-block">Każdą linię opisu zacznij od "✦ ". Przykład:<br>✦ Długa historia<br>✦ Pełna weryfikacja<br>✦ Gwarancja bezpieczeństwa</small>
-                    <textarea class="form-control mt-2" id="productDescription" rows="3" required></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label for="productPrice" class="form-label">Cena (PLN)</label>
-                    <input type="number" class="form-control" id="productPrice" required>
-                </div>
-
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="productPromotion" onchange="togglePromotionFields()">
-                        <label class="form-check-label" for="productPromotion">
-                            Włącz promocję
-                        </label>
-                    </div>
-                </div>
-
-                <div id="promotionFields" style="display: none;">
-                    <div class="mb-3">
-                        <label for="promotionPrice" class="form-label">Cena promocyjna (PLN)</label>
-                        <input type="number" class="form-control" id="promotionPrice">
-                    </div>
-                    <div class="mb-3">
-                        <label for="promotionEndDate" class="form-label">Data zakończenia promocji</label>
-                        <input type="datetime-local" class="form-control" id="promotionEndDate">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Dodaj produkt</button>
-            </form>
-        </div>
-
-        <div class="mt-4">
-            <h2>Lista produktów</h2>
-            <div id="productList" class="list-group mt-3">
-                <!-- Tu będą wyświetlane dodane produkty -->
-            </div>
-        </div>
-    </div>
-
-    <div class="container mt-4">
-        <h2>Panel Administratora</h2>
         
-        <!-- Sekcja wyszukiwania i filtrowania -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Wyszukiwanie i filtrowanie</h5>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Szukaj po nazwie...">
-                    </div>
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col">
-                                <input type="number" id="minPrice" class="form-control" placeholder="Cena od">
-                            </div>
-                            <div class="col">
-                                <input type="number" id="maxPrice" class="form-control" placeholder="Cena do">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <select id="sortSelect" class="form-select">
-                            <option value="default">Sortowanie</option>
-                            <option value="priceAsc">Cena: rosnąco</option>
-                            <option value="priceDesc">Cena: malejąco</option>
-                            <option value="nameAsc">Nazwa: A-Z</option>
-                            <option value="nameDesc">Nazwa: Z-A</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reszta kodu -->
+        <!-- Formularz dodawania produktu -->
         <div class="product-form">
             <form id="productForm">
                 <div class="mb-3">
@@ -370,113 +265,12 @@
             </form>
         </div>
 
-        <div class="mt-4">
-            <h2>Lista produktów</h2>
-            <div id="productList" class="list-group mt-3">
-                <!-- Tu będą wyświetlane dodane produkty -->
-            </div>
-        </div>
-    </div>
-
-    <div class="container mt-4">
-        <h2>Panel Administratora</h2>
-        
-        <!-- Sekcja wyszukiwania i filtrowania -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Wyszukiwanie i filtrowanie</h5>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <input type="text" id="searchInput" class="form-control" placeholder="Szukaj po nazwie...">
-                    </div>
-                    <div class="col-md-6">
-                        <div class="row">
-                            <div class="col">
-                                <input type="number" id="minPrice" class="form-control" placeholder="Cena od">
-                            </div>
-                            <div class="col">
-                                <input type="number" id="maxPrice" class="form-control" placeholder="Cena do">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <select id="sortSelect" class="form-select">
-                            <option value="default">Sortowanie</option>
-                            <option value="priceAsc">Cena: rosnąco</option>
-                            <option value="priceDesc">Cena: malejąco</option>
-                            <option value="nameAsc">Nazwa: A-Z</option>
-                            <option value="nameDesc">Nazwa: Z-A</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+        <!-- Wyszukiwarka -->
+        <div class="mt-4 mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Szukaj po nazwie...">
         </div>
 
-        <!-- Reszta kodu -->
-        <div class="product-form">
-            <form id="productForm">
-                <div class="mb-3">
-                    <label class="form-label">Typ produktu</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="steam" value="steam" checked>
-                        <label class="form-check-label" for="steam">
-                            Konto Steam
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="instagram" value="instagram">
-                        <label class="form-check-label" for="instagram">
-                            Konto Instagram
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="facebook" value="facebook">
-                        <label class="form-check-label" for="facebook">
-                            Konto Facebook
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="productName" class="form-label">Nazwa produktu</label>
-                    <input type="text" class="form-control" id="productName" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="productDescription" class="form-label">Opis produktu</label>
-                    <small class="form-text text-muted d-block">Każdą linię opisu zacznij od "✦ ". Przykład:<br>✦ Długa historia<br>✦ Pełna weryfikacja<br>✦ Gwarancja bezpieczeństwa</small>
-                    <textarea class="form-control mt-2" id="productDescription" rows="3" required></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label for="productPrice" class="form-label">Cena (PLN)</label>
-                    <input type="number" class="form-control" id="productPrice" required>
-                </div>
-
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="productPromotion" onchange="togglePromotionFields()">
-                        <label class="form-check-label" for="productPromotion">
-                            Włącz promocję
-                        </label>
-                    </div>
-                </div>
-
-                <div id="promotionFields" style="display: none;">
-                    <div class="mb-3">
-                        <label for="promotionPrice" class="form-label">Cena promocyjna (PLN)</label>
-                        <input type="number" class="form-control" id="promotionPrice">
-                    </div>
-                    <div class="mb-3">
-                        <label for="promotionEndDate" class="form-label">Data zakończenia promocji</label>
-                        <input type="datetime-local" class="form-control" id="promotionEndDate">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Dodaj produkt</button>
-            </form>
-        </div>
-
+        <!-- Lista produktów -->
         <div class="mt-4">
             <h2>Lista produktów</h2>
             <div id="productList" class="list-group mt-3">
@@ -733,24 +527,16 @@
             // Sprawdź i zaktualizuj status promocji przed wyświetleniem
             checkAndUpdatePromotions();
             
-            const steamProducts = products.filter(p => p.type === 'steam');
-            const instagramProducts = products.filter(p => p.type === 'instagram');
-            const facebookProducts = products.filter(p => p.type === 'facebook');
+            // Pobierz tekst wyszukiwania
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
             
-            if (steamProducts.length > 0) {
-                productList.innerHTML += '<h3 class="mt-3">Konta Steam</h3>';
-                steamProducts.forEach(addProductToList);
-            }
+            // Filtruj produkty po nazwie
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchText)
+            );
             
-            if (instagramProducts.length > 0) {
-                productList.innerHTML += '<h3 class="mt-3">Konta Instagram</h3>';
-                instagramProducts.forEach(addProductToList);
-            }
-
-            if (facebookProducts.length > 0) {
-                productList.innerHTML += '<h3 class="mt-3">Konta Facebook</h3>';
-                facebookProducts.forEach(addProductToList);
-            }
+            // Wyświetl wszystkie produkty
+            filteredProducts.forEach(addProductToList);
         }
 
         function addProductToList(product) {
@@ -794,61 +580,8 @@
             }, 10);
         }
 
-        // Wyświetl produkty przy starcie
-        displayProducts();
-
-        // Funkcje filtrowania i sortowania
-        function filterAndSortProducts() {
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
-            const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
-            const sortType = document.getElementById('sortSelect').value;
-
-            // Czyścimy listę produktów
-            const productList = document.getElementById('productList');
-            productList.innerHTML = '';
-
-            // Filtrujemy i sortujemy produkty
-            let filteredProducts = products.filter(product => {
-                const price = product.promotion?.enabled ? product.promotion.price : product.price;
-                return product.name.toLowerCase().includes(searchText) &&
-                       price >= minPrice &&
-                       (maxPrice === Infinity || price <= maxPrice);
-            });
-
-            // Sortowanie
-            switch(sortType) {
-                case 'priceAsc':
-                    filteredProducts.sort((a, b) => {
-                        const priceA = a.promotion?.enabled ? a.promotion.price : a.price;
-                        const priceB = b.promotion?.enabled ? b.promotion.price : b.price;
-                        return priceA - priceB;
-                    });
-                    break;
-                case 'priceDesc':
-                    filteredProducts.sort((a, b) => {
-                        const priceA = a.promotion?.enabled ? a.promotion.price : a.price;
-                        const priceB = b.promotion?.enabled ? b.promotion.price : b.price;
-                        return priceB - priceA;
-                    });
-                    break;
-                case 'nameAsc':
-                    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
-                    break;
-                case 'nameDesc':
-                    filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
-                    break;
-            }
-
-            // Wyświetlamy przefiltrowane i posortowane produkty
-            filteredProducts.forEach(product => addProductToList(product));
-        }
-
-        // Dodajemy nasłuchiwanie zdarzeń
-        document.getElementById('searchInput').addEventListener('input', filterAndSortProducts);
-        document.getElementById('minPrice').addEventListener('input', filterAndSortProducts);
-        document.getElementById('maxPrice').addEventListener('input', filterAndSortProducts);
-        document.getElementById('sortSelect').addEventListener('change', filterAndSortProducts);
+        // Nasłuchuj zmian w polu wyszukiwania
+        document.getElementById('searchInput').addEventListener('input', displayProducts);
 
         // Obsługa przełączania motywu
         const themeToggle = document.getElementById('themeToggle');
