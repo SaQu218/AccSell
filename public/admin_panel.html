@@ -103,6 +103,61 @@
             margin: 5px 0;
             color: inherit;
         }
+        .nav-tabs .nav-link {
+            color: #4a90e2;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background-color: #357abd;
+            color: white;
+        }
+
+        .review-box {
+            background-color: #1a1a1a;
+            border: 1px solid #4a90e2;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .review-box .delete-review {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .review-box .delete-review:hover {
+            background-color: #c82333;
+        }
+
+        .review-box .stars {
+            color: #ffd700;
+            margin: 10px 0;
+        }
+
+        .review-box .review-date {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -200,87 +255,111 @@
     <div class="container">
         <h1 class="mb-4">Panel Administratora</h1>
         
-        <!-- Formularz dodawania produktu -->
-        <div class="product-form">
-            <form id="productForm">
-                <div class="mb-3">
-                    <label class="form-label">Typ produktu</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="steam" value="steam" checked>
-                        <label class="form-check-label" for="steam">
-                            Konto Steam
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="instagram" value="instagram">
-                        <label class="form-check-label" for="instagram">
-                            Konto Instagram
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="facebook" value="facebook">
-                        <label class="form-check-label" for="facebook">
-                            Konto Facebook
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="productName" class="form-label">Nazwa produktu</label>
-                    <input type="text" class="form-control" id="productName" required>
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#products">Produkty</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#reviews">Opinie</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="products">
+                <!-- Formularz dodawania produktu -->
+                <div class="product-form">
+                    <form id="productForm">
+                        <div class="mb-3">
+                            <label class="form-label">Typ produktu</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="productType" id="steam" value="steam" checked>
+                                <label class="form-check-label" for="steam">
+                                    Konto Steam
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="productType" id="instagram" value="instagram">
+                                <label class="form-check-label" for="instagram">
+                                    Konto Instagram
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="productType" id="facebook" value="facebook">
+                                <label class="form-check-label" for="facebook">
+                                    Konto Facebook
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="productName" class="form-label">Nazwa produktu</label>
+                            <input type="text" class="form-control" id="productName" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label">Opis produktu</label>
+                            <small class="form-text text-muted d-block">Każdą linię opisu zacznij od "✦ ". Przykład:<br>✦ Długa historia<br>✦ Pełna weryfikacja<br>✦ Gwarancja bezpieczeństwa</small>
+                            <textarea class="form-control mt-2" id="productDescription" rows="3" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="productPrice" class="form-label">Cena (PLN)</label>
+                            <input type="number" class="form-control" id="productPrice" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="productPromotion" onchange="togglePromotionFields()">
+                                <label class="form-check-label" for="productPromotion">
+                                    Włącz promocję
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="promotionFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="promotionPrice" class="form-label">Cena promocyjna (PLN)</label>
+                                <input type="number" class="form-control" id="promotionPrice">
+                            </div>
+                            <div class="mb-3">
+                                <label for="promotionEndDate" class="form-label">Data zakończenia promocji</label>
+                                <input type="datetime-local" class="form-control" id="promotionEndDate">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Dodaj produkt</button>
+                    </form>
                 </div>
 
-                <div class="mb-3">
-                    <label for="productDescription" class="form-label">Opis produktu</label>
-                    <small class="form-text text-muted d-block">Każdą linię opisu zacznij od "✦ ". Przykład:<br>✦ Długa historia<br>✦ Pełna weryfikacja<br>✦ Gwarancja bezpieczeństwa</small>
-                    <textarea class="form-control mt-2" id="productDescription" rows="3" required></textarea>
-                </div>
-
-                <div class="mb-3">
-                    <label for="productPrice" class="form-label">Cena (PLN)</label>
-                    <input type="number" class="form-control" id="productPrice" required>
-                </div>
-
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="productPromotion" onchange="togglePromotionFields()">
-                        <label class="form-check-label" for="productPromotion">
-                            Włącz promocję
-                        </label>
+                <!-- Lista wszystkich produktów -->
+                <div class="mt-4">
+                    <h2>Lista produktów</h2>
+                    <div id="productList" class="list-group mt-3">
+                        <!-- Tu będą wyświetlane wszystkie produkty -->
                     </div>
                 </div>
 
-                <div id="promotionFields" style="display: none;">
-                    <div class="mb-3">
-                        <label for="promotionPrice" class="form-label">Cena promocyjna (PLN)</label>
-                        <input type="number" class="form-control" id="promotionPrice">
+                <!-- Wyszukiwarka po typie konta -->
+                <div class="mt-4">
+                    <h2>Wyszukaj konta</h2>
+                    <div class="input-group mb-3">
+                        <input type="text" id="accountSearchInput" class="form-control" placeholder="Wpisz typ konta (np. steam, facebook, instagram)...">
                     </div>
-                    <div class="mb-3">
-                        <label for="promotionEndDate" class="form-label">Data zakończenia promocji</label>
-                        <input type="datetime-local" class="form-control" id="promotionEndDate">
+                    <div id="accountSearchResults" class="list-group mt-3">
+                        <!-- Tu będą wyświetlane wyniki wyszukiwania -->
                     </div>
                 </div>
-
-                <button type="submit" class="btn btn-primary">Dodaj produkt</button>
-            </form>
-        </div>
-
-        <!-- Lista wszystkich produktów -->
-        <div class="mt-4">
-            <h2>Lista produktów</h2>
-            <div id="productList" class="list-group mt-3">
-                <!-- Tu będą wyświetlane wszystkie produkty -->
             </div>
-        </div>
 
-        <!-- Wyszukiwarka po typie konta -->
-        <div class="mt-4">
-            <h2>Wyszukaj konta</h2>
-            <div class="input-group mb-3">
-                <input type="text" id="accountSearchInput" class="form-control" placeholder="Wpisz typ konta (np. steam, facebook, instagram)...">
-            </div>
-            <div id="accountSearchResults" class="list-group mt-3">
-                <!-- Tu będą wyświetlane wyniki wyszukiwania -->
+            <div class="tab-pane fade" id="reviews">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Zarządzanie opiniami</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="reviewsList"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -772,6 +851,58 @@
             </div>
         `;
         document.body.appendChild(logsModal);
+
+        // Funkcja do wyświetlania opinii
+        function displayReviews() {
+            const reviewsList = document.getElementById('reviewsList');
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            
+            if (reviews.length === 0) {
+                reviewsList.innerHTML = '<p>Brak opinii do wyświetlenia.</p>';
+                return;
+            }
+
+            reviewsList.innerHTML = reviews.map((review, index) => `
+                <div class="review-box">
+                    <button class="delete-review" onclick="deleteReview(${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <h4>${review.name}</h4>
+                    <div class="stars">
+                        ${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
+                    </div>
+                    <p>${review.comment}</p>
+                    <div class="review-date">${new Date(review.date).toLocaleString()}</div>
+                </div>
+            `).join('');
+        }
+
+        // Funkcja do usuwania opinii
+        function deleteReview(index) {
+            if (confirm('Czy na pewno chcesz usunąć tę opinię?')) {
+                const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+                reviews.splice(index, 1);
+                localStorage.setItem('reviews', JSON.stringify(reviews));
+                displayReviews();
+            }
+        }
+
+        // Wyświetl opinie przy załadowaniu strony
+        displayReviews();
+
+        // Obsługa przełączania zakładek
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                const targetId = this.getAttribute('href').substring(1);
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('show', 'active');
+                });
+                document.getElementById(targetId).classList.add('show', 'active');
+            });
+        });
     </script>
 </body>
 </html> 
