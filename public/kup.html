@@ -62,12 +62,33 @@
         .account-box p {
             font-size: 18px;
             margin: 5px 0;
-            display: inline-block;
-            vertical-align: middle;
+            display: block;
+            text-align: left;
+            padding-left: 20px;
+        }
+        .account-box .product-name {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 15px;
+            display: block;
+            padding-left: 0;
+        }
+        .account-box .price {
+            text-align: center;
+            color: #ffd700;
+            font-size: 24px;
+            margin: 15px 0;
+            padding-left: 0;
+        }
+        .account-box .description-line {
+            color: #ffffff;
+            margin: 8px 0;
+            text-align: left;
         }
         .account-box .buy-button {
             background-color: #ffd700;
-            color: white;
+            color: black;
+            font-weight: bold;
             font-size: 18px;
             padding: 10px 20px;
             border: none;
@@ -80,9 +101,31 @@
             transform: translateX(-50%);
             cursor: pointer;
             transition: background 0.3s ease;
+            width: 80%;
         }
         .account-box .buy-button:hover {
             background-color: #e6b800;
+        }
+        .cart-button {
+            background-color: #28a745;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 80%;
+        }
+        .cart-button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
@@ -97,9 +140,15 @@
 
         <div class="account-box">
             <i class="fa-brands fa-facebook"></i>
-            <p id="product-name"><strong>Ładowanie...</strong></p>
-            <p>Cena: <strong id="product-price">Ładowanie...</strong></p>
-            <button class="buy-button" onclick="buyProduct()">Kup</button>
+            <p id="product-name" class="product-name"><strong>Ładowanie...</strong></p>
+            <div id="product-description"></div>
+            <p id="product-price" class="price">Ładowanie...</p>
+            <button class="cart-button" onclick="addToCart()">
+                <i class="fas fa-shopping-cart"></i> Dodaj do koszyka
+            </button>
+            <button class="buy-button" onclick="buyProduct()">
+                <i class="fas fa-shopping-bag"></i> KUP TERAZ
+            </button>
         </div>
     </div>
 
@@ -125,6 +174,8 @@
                 return;
             }
 
+            // Ustawienie nazwy produktu
+            document.getElementById('product-name').className = 'product-name';
             document.getElementById('product-name').innerHTML = `<strong>${product}</strong>`;
             
             // Sprawdź czy produkt ma aktywną promocję
@@ -134,7 +185,7 @@
                 if (endDate > new Date()) {
                     priceDisplay = `
                         <span style="text-decoration: line-through;">${selectedProduct.price} zł</span>
-                        <span style="color: red; margin-left: 10px;">${selectedProduct.promotion.price} zł</span>
+                        <span style="color: #ffd700; margin-left: 10px;">${selectedProduct.promotion.price} zł</span>
                         <br>
                         <small style="color: #666;">Promocja do: ${endDate.toLocaleString()}</small>
                     `;
@@ -144,7 +195,15 @@
                     localStorage.setItem('products', JSON.stringify(products));
                 }
             }
-            document.getElementById('product-price').innerHTML = `<strong>${priceDisplay}</strong>`;
+            document.getElementById('product-price').className = 'price';
+            document.getElementById('product-price').innerHTML = priceDisplay;
+
+            // Wyświetl opis produktu
+            const descriptionLines = selectedProduct.description.split('\n');
+            const descriptionHtml = descriptionLines
+                .map(line => `<p class="description-line">${line.trim()}</p>`)
+                .join('');
+            document.getElementById('product-description').innerHTML = descriptionHtml;
 
             // Ustawienie odpowiedniej ikony w zależności od typu produktu
             let iconClass = 'fa-facebook';
@@ -154,6 +213,17 @@
                 iconClass = 'fa-steam';
             }
             document.querySelector('.account-box i').className = `fa-brands ${iconClass}`;
+
+            // Aktualizacja tytułu strony w zależności od typu produktu
+            let title = 'Witamy w dziale kont';
+            if (selectedProduct.type === 'instagram') {
+                title = 'Witamy w dziale kont Instagram';
+            } else if (selectedProduct.type === 'steam') {
+                title = 'Witamy w dziale kont Steam';
+            } else {
+                title = 'Witamy w dziale kont Facebook';
+            }
+            document.querySelector('.content h1').textContent = title;
         }
 
         window.onload = setProductDetails;
@@ -225,6 +295,42 @@
                 console.error('Błąd podczas tworzenia sesji płatności:', error);
                 alert(`Wystąpił błąd podczas tworzenia sesji płatności: ${error.message}`);
             }
+        }
+
+        function addToCart() {
+            const product = getQueryParam('product');
+            if (!product) {
+                alert('Nie wybrano produktu!');
+                return;
+            }
+
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const selectedProduct = products.find(p => p.name === product);
+
+            if (!selectedProduct) {
+                alert('Nie znaleziono produktu!');
+                return;
+            }
+
+            // Sprawdź czy produkt ma aktywną promocję
+            let price = selectedProduct.price;
+            if (selectedProduct.promotion && selectedProduct.promotion.enabled) {
+                const endDate = new Date(selectedProduct.promotion.endDate);
+                if (endDate > new Date()) {
+                    price = selectedProduct.promotion.price;
+                }
+            }
+
+            // Dodaj do koszyka
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart.push({
+                id: Date.now(),
+                product: product,
+                price: price
+            });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            alert('Produkt został dodany do koszyka!');
         }
     </script>
 </body>

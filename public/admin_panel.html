@@ -119,14 +119,24 @@
         <div class="product-form">
             <form id="productForm">
                 <div class="mb-3">
-                    <label class="form-label">Typ produktu:</label>
+                    <label class="form-label">Typ produktu</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="steamAccount" value="steam" required>
-                        <label class="form-check-label" for="steamAccount">Konto Steam</label>
+                        <input class="form-check-input" type="radio" name="productType" id="steam" value="steam" checked>
+                        <label class="form-check-label" for="steam">
+                            Konto Steam
+                        </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="productType" id="instagramAccount" value="instagram">
-                        <label class="form-check-label" for="instagramAccount">Konto Instagram</label>
+                        <input class="form-check-input" type="radio" name="productType" id="instagram" value="instagram">
+                        <label class="form-check-label" for="instagram">
+                            Konto Instagram
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="productType" id="facebook" value="facebook">
+                        <label class="form-check-label" for="facebook">
+                            Konto Facebook
+                        </label>
                     </div>
                 </div>
                 
@@ -137,7 +147,8 @@
 
                 <div class="mb-3">
                     <label for="productDescription" class="form-label">Opis produktu</label>
-                    <textarea class="form-control" id="productDescription" rows="3" required></textarea>
+                    <small class="form-text text-muted d-block">Każdą linię opisu zacznij od "✦ ". Przykład:<br>✦ Długa historia<br>✦ Pełna weryfikacja<br>✦ Gwarancja bezpieczeństwa</small>
+                    <textarea class="form-control mt-2" id="productDescription" rows="3" required></textarea>
                 </div>
 
                 <div class="mb-3">
@@ -215,6 +226,27 @@
                 name: 'Konto Instagram 195K Follow',
                 description: 'Konto Instagram z 195 tysiącami followersów',
                 price: 180
+            },
+            {
+                id: 6,
+                type: 'facebook',
+                name: 'Konto Facebook 2012',
+                description: 'Stare konto Facebook z 2012 roku',
+                price: 45
+            },
+            {
+                id: 7,
+                type: 'facebook',
+                name: 'Konto Facebook 2015',
+                description: 'Konto Facebook z 2015 roku',
+                price: 35
+            },
+            {
+                id: 8,
+                type: 'facebook',
+                name: 'Konto Facebook 2018',
+                description: 'Konto Facebook z 2018 roku',
+                price: 25
             }
         ];
 
@@ -377,6 +409,7 @@
             
             const steamProducts = products.filter(p => p.type === 'steam');
             const instagramProducts = products.filter(p => p.type === 'instagram');
+            const facebookProducts = products.filter(p => p.type === 'facebook');
             
             if (steamProducts.length > 0) {
                 productList.innerHTML += '<h3 class="mt-3">Konta Steam</h3>';
@@ -386,6 +419,11 @@
             if (instagramProducts.length > 0) {
                 productList.innerHTML += '<h3 class="mt-3">Konta Instagram</h3>';
                 instagramProducts.forEach(addProductToList);
+            }
+
+            if (facebookProducts.length > 0) {
+                productList.innerHTML += '<h3 class="mt-3">Konta Facebook</h3>';
+                facebookProducts.forEach(addProductToList);
             }
         }
 
@@ -412,7 +450,7 @@
                     <span class="delete-btn" onclick="deleteProduct(${product.id})">❌</span>
                     <span class="edit-btn" onclick="editProduct(${product.id})">✏️</span>
                 </h5>
-                <p><strong>Typ:</strong> ${product.type === 'steam' ? 'Steam' : 'Instagram'}</p>
+                <p><strong>Typ:</strong> ${product.type === 'steam' ? 'Steam' : product.type === 'instagram' ? 'Instagram' : 'Facebook'}</p>
                 <p><strong>Opis:</strong> ${product.description}</p>
                 <p><strong>Cena:</strong> ${priceDisplay}</p>
             `;
