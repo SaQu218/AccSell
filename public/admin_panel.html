@@ -265,16 +265,22 @@
             </form>
         </div>
 
-        <!-- Wyszukiwarka -->
-        <div class="mt-4 mb-3">
-            <input type="text" id="searchInput" class="form-control" placeholder="Szukaj po nazwie...">
-        </div>
-
-        <!-- Lista produktów -->
+        <!-- Lista wszystkich produktów -->
         <div class="mt-4">
             <h2>Lista produktów</h2>
             <div id="productList" class="list-group mt-3">
-                <!-- Tu będą wyświetlane dodane produkty -->
+                <!-- Tu będą wyświetlane wszystkie produkty -->
+            </div>
+        </div>
+
+        <!-- Wyszukiwarka po typie konta -->
+        <div class="mt-4">
+            <h2>Wyszukaj konta</h2>
+            <div class="input-group mb-3">
+                <input type="text" id="accountSearchInput" class="form-control" placeholder="Wpisz typ konta (np. steam, facebook, instagram)...">
+            </div>
+            <div id="accountSearchResults" class="list-group mt-3">
+                <!-- Tu będą wyświetlane wyniki wyszukiwania -->
             </div>
         </div>
     </div>
@@ -527,16 +533,8 @@
             // Sprawdź i zaktualizuj status promocji przed wyświetleniem
             checkAndUpdatePromotions();
             
-            // Pobierz tekst wyszukiwania
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
-            
-            // Filtruj produkty po nazwie
-            const filteredProducts = products.filter(product => 
-                product.name.toLowerCase().includes(searchText)
-            );
-            
             // Wyświetl wszystkie produkty
-            filteredProducts.forEach(addProductToList);
+            products.forEach(addProductToList);
         }
 
         function addProductToList(product) {
@@ -580,8 +578,64 @@
             }, 10);
         }
 
-        // Nasłuchuj zmian w polu wyszukiwania
-        document.getElementById('searchInput').addEventListener('input', displayProducts);
+        // Funkcja wyszukująca konta po typie
+        function searchAccounts() {
+            const searchText = document.getElementById('accountSearchInput').value.toLowerCase();
+            const resultsContainer = document.getElementById('accountSearchResults');
+            resultsContainer.innerHTML = '';
+            
+            if (!searchText) {
+                return;
+            }
+
+            const filteredProducts = products.filter(product => 
+                product.type.toLowerCase().includes(searchText)
+            );
+
+            filteredProducts.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'list-group-item';
+                
+                let priceDisplay = `${product.price} PLN`;
+                if (product.promotion && product.promotion.enabled) {
+                    const endDate = new Date(product.promotion.endDate);
+                    if (endDate > new Date()) {
+                        priceDisplay = `
+                            <span style="text-decoration: line-through;">${product.price} PLN</span>
+                            <span style="color: red; margin-left: 10px;">${product.promotion.price} PLN</span>
+                            <br>
+                            <small style="color: #666;">Promocja do: ${endDate.toLocaleString()}</small>
+                        `;
+                    }
+                }
+
+                const formattedDescription = product.description
+                    .split('✦')
+                    .filter(line => line.trim() !== '')
+                    .map(line => '✦' + line)
+                    .join('<br>');
+
+                productElement.innerHTML = `
+                    <h5>${product.name}</h5>
+                    <p><strong>Typ:</strong> ${product.type === 'steam' ? 'Steam' : product.type === 'instagram' ? 'Instagram' : 'Facebook'}</p>
+                    <p><strong>Opis:</strong><br>${formattedDescription}</p>
+                    <p><strong>Cena:</strong> ${priceDisplay}</p>
+                `;
+                resultsContainer.appendChild(productElement);
+            });
+
+            if (filteredProducts.length === 0) {
+                resultsContainer.innerHTML = '<div class="list-group-item">Nie znaleziono kont tego typu.</div>';
+            }
+        }
+
+        // Nasłuchiwanie zmian w polu wyszukiwania kont
+        document.getElementById('accountSearchInput').addEventListener('input', searchAccounts);
+
+        // Wyświetl produkty przy starcie strony
+        document.addEventListener('DOMContentLoaded', () => {
+            displayProducts();
+        });
 
         // Obsługa przełączania motywu
         const themeToggle = document.getElementById('themeToggle');
