@@ -11,7 +11,6 @@
             margin-top: 50px;
         }
         .product-form {
-            background-color: #f8f9fa;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -22,7 +21,7 @@
             margin-left: 10px;
         }
         .delete-btn {
-            color: red;
+            color: #ff4444;
         }
         .edit-btn {
             color: #0d6efd;
@@ -49,6 +48,10 @@
         }
         /* Animacje */
         .list-group-item {
+            background-color: #ffffff;
+            color: #000000;
+            margin-bottom: 10px;
+            border: 1px solid #dee2e6;
             transition: all 0.3s ease;
         }
         .list-group-item:hover {
@@ -60,14 +63,45 @@
             background-color: #212529;
             color: #fff;
         }
+        [data-bs-theme="dark"] .product-form {
+            background-color: #2c3034;
+            color: #ffffff;
+        }
         [data-bs-theme="dark"] .card {
             background-color: #2c3034;
             border-color: #373b3e;
+            color: #ffffff;
         }
-        [data-bs-theme="dark"] .list-group-item {
-            background-color: #2c3034;
+        [data-bs-theme="dark"] .form-control {
+            background-color: #212529;
             border-color: #373b3e;
-            color: #fff;
+            color: #ffffff;
+        }
+        [data-bs-theme="dark"] .form-control:focus {
+            background-color: #2c3034;
+            color: #ffffff;
+        }
+        [data-bs-theme="dark"] .form-select {
+            background-color: #212529;
+            border-color: #373b3e;
+            color: #ffffff;
+        }
+        [data-bs-theme="dark"] .modal-content {
+            background-color: #2c3034;
+            color: #ffffff;
+        }
+        [data-bs-theme="dark"] .modal-header {
+            border-bottom-color: #373b3e;
+        }
+        [data-bs-theme="dark"] .modal-footer {
+            border-top-color: #373b3e;
+        }
+        [data-bs-theme="dark"] .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+        .description-line {
+            margin: 5px 0;
+            color: inherit;
         }
     </style>
 </head>

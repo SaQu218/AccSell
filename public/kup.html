@@ -106,6 +106,77 @@
         .account-box .buy-button:hover {
             background-color: #e6b800;
         }
+        .reviews-section {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 800px;
+            text-align: left;
+        }
+        .review-form {
+            margin-bottom: 20px;
+        }
+        .rating-select {
+            background-color: #2c2c2c;
+            color: white;
+            border: 1px solid #4a90e2;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+        .review-textarea {
+            width: 100%;
+            height: 100px;
+            background-color: #2c2c2c;
+            color: white;
+            border: 1px solid #4a90e2;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        .review-button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .reviews-list {
+            margin-top: 20px;
+        }
+        .review-item {
+            background-color: #2c2c2c;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+        .faq-section {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 800px;
+            text-align: left;
+        }
+        .faq-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #2c2c2c;
+            border-radius: 5px;
+        }
+        .faq-question {
+            color: #4a90e2;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .faq-answer {
+            color: #ffffff;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -125,6 +196,42 @@
             <button class="buy-button" onclick="buyProduct()">
                 <i class="fas fa-shopping-bag"></i> KUP TERAZ
             </button>
+        </div>
+
+        <!-- System ocen -->
+        <div class="reviews-section">
+            <h3>Oceny i opinie</h3>
+            <div class="review-form">
+                <select id="rating" class="rating-select">
+                    <option value="5">⭐⭐⭐⭐⭐</option>
+                    <option value="4">⭐⭐⭐⭐</option>
+                    <option value="3">⭐⭐⭐</option>
+                    <option value="2">⭐⭐</option>
+                    <option value="1">⭐</option>
+                </select>
+                <textarea id="reviewText" placeholder="Twoja opinia..." class="review-textarea"></textarea>
+                <button onclick="submitReview()" class="review-button">Dodaj opinię</button>
+            </div>
+            <div id="reviewsList" class="reviews-list"></div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="faq-section">
+            <h3>Często zadawane pytania</h3>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <p class="faq-question">Co jeśli stracę konto?</p>
+                    <p class="faq-answer">Odp od adminów strony: Wtedy skontaktuj się z naszym suportem</p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Jak długo trwa realizacja zamówienia?</p>
+                    <p class="faq-answer">Odp od adminów strony: Realizacja zamówienia następuje automatycznie po zaksięgowaniu płatności</p>
+                </div>
+                <div class="faq-item">
+                    <p class="faq-question">Czy otrzymam dane do logowania?</p>
+                    <p class="faq-answer">Odp od adminów strony: Tak, dane do logowania zostaną wysłane na podany adres email natychmiast po potwierdzeniu płatności</p>
+                </div>
+            </div>
         </div>
     </div>
 
