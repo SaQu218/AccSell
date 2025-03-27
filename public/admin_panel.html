@@ -507,6 +507,11 @@
                         if (productDataToAdd) {
                             products.push(productDataToAdd);
                             localStorage.setItem('products', JSON.stringify(products));
+                            logAdminAction('product_add', {
+                                id: productDataToAdd.id,
+                                name: productDataToAdd.name,
+                                type: productDataToAdd.type
+                            });
                             productDataToAdd = null;
                             document.getElementById('productForm').reset();
                             displayProducts();
@@ -530,6 +535,12 @@
                                     if (!response.ok) {
                                         throw new Error('Błąd podczas usuwania opinii');
                                     }
+
+                                    logAdminAction('product_removed', {
+                                        id: productToDelete,
+                                        name: productToRemove.name,
+                                        type: productToRemove.type
+                                    });
 
                                     // Usuń produkt z localStorage
                                     products = products.filter(p => p.id !== productToDelete);
@@ -579,7 +590,7 @@
             const index = products.findIndex(p => p.id === productToEdit.id);
             if (index === -1) return;
 
-            products[index] = {
+            const updatedProduct = {
                 ...productToEdit,
                 type: document.getElementById('editProductType').value,
                 name: document.getElementById('editProductName').value,
@@ -592,7 +603,20 @@
                 } : null
             };
 
+            products[index] = updatedProduct;
             localStorage.setItem('products', JSON.stringify(products));
+            
+            logAdminAction('product_edit', {
+                id: updatedProduct.id,
+                name: updatedProduct.name,
+                type: updatedProduct.type,
+                changes: {
+                    oldName: productToEdit.name,
+                    oldType: productToEdit.type,
+                    oldPrice: productToEdit.price
+                }
+            });
+
             productToEdit = null;
             displayProducts();
 
@@ -865,10 +889,25 @@
                     <div class="modal-body">
                         <div id="logsContent" style="max-height: 500px; overflow-y: auto;"></div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" onclick="clearLogs()">
+                            <i class="bi bi-trash"></i> Wyczyść logi
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
         document.body.appendChild(logsModal);
+
+        // Funkcja do czyszczenia logów
+        function clearLogs() {
+            if (confirm('Czy na pewno chcesz wyczyścić wszystkie logi? Tej operacji nie można cofnąć.')) {
+                adminLogs.length = 0; // Wyczyść tablicę logów
+                localStorage.setItem('adminLogs', JSON.stringify(adminLogs));
+                document.getElementById('logsContent').innerHTML = '<p>Brak logów do wyświetlenia.</p>';
+                logAdminAction('logs_cleared', { timestamp: new Date().toISOString() });
+            }
+        }
 
         // Funkcja do wyświetlania opinii
         async function displayReviews() {
@@ -930,7 +969,7 @@
                     }
 
                     displayReviews();
-                    logAdminAction('review_deleted', { reviewId });
+                    logAdminAction('review_removed', { reviewId });
                 } catch (error) {
                     console.error('Błąd podczas usuwania opinii:', error);
                     alert('Wystąpił błąd podczas usuwania opinii. Spróbuj ponownie później.');
