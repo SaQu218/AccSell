@@ -16,15 +16,17 @@ router.get('/:productId', async (req, res) => {
 // Dodaj nową opinię
 router.post('/', async (req, res) => {
     try {
-        const { productId, rating } = req.body;
+        const { productId, rating, content } = req.body;
 
-        if (!productId || !rating || rating < 1 || rating > 5) {
+        if (!productId || !rating || !content || rating < 1 || rating > 5) {
             return res.status(400).json({ error: 'Nieprawidłowe dane opinii' });
         }
 
         const review = new Review({
             productId,
-            rating
+            rating,
+            content,
+            author: 'Anonimowy' // Domyślna wartość
         });
 
         await review.save();

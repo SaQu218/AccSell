@@ -11,6 +11,14 @@ const reviewSchema = new mongoose.Schema({
         min: 1,
         max: 5
     },
+    author: {
+        type: String,
+        default: 'Anonimowy'
+    },
+    content: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now

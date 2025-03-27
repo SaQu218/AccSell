@@ -303,6 +303,85 @@
         .submit-review-btn:hover {
             background: #ffed4a;
         }
+
+        .review-form {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .review-content-input {
+            width: 100%;
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #4a90e2;
+            border-radius: 5px;
+            color: white;
+            resize: vertical;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-author {
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        .review-content {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+
+        .review-date {
+            color: #666;
+            font-size: 0.8rem;
+            text-align: right;
+        }
+
+        .rating-input {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .rating-input input {
+            display: none;
+        }
+
+        .rating-input label {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #ccc;
+            transition: color 0.2s;
+        }
+
+        .rating-input input:checked ~ label,
+        .rating-input label:hover,
+        .rating-input label:hover ~ label {
+            color: #ffd700;
+        }
+
+        .submit-review-btn {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-review-btn:hover {
+            background: #357abd;
+        }
     </style>
 </head>
 <body>
@@ -476,8 +555,14 @@
                     const reviewElement = document.createElement('div');
                     reviewElement.className = 'review-item';
                     reviewElement.innerHTML = `
-                        <div class="review-rating">
-                            ${'⭐'.repeat(review.rating)}
+                        <div class="review-header">
+                            <span class="review-author">${review.author}</span>
+                            <div class="review-rating">
+                                ${'⭐'.repeat(review.rating)}
+                            </div>
+                        </div>
+                        <div class="review-content">
+                            ${review.content}
                         </div>
                         <div class="review-date">
                             ${new Date(review.createdAt).toLocaleDateString()}
@@ -492,11 +577,12 @@
                 reviewForm.innerHTML = `
                     <h3>Dodaj opinię</h3>
                     <div class="rating-input">
-                        ${[1, 2, 3, 4, 5].map(num => `
+                        ${[5,4,3,2,1].map(num => `
                             <input type="radio" id="star${num}" name="rating" value="${num}">
                             <label for="star${num}">⭐</label>
                         `).join('')}
                     </div>
+                    <textarea id="reviewContent" class="review-content-input" placeholder="Napisz swoją opinię..." rows="4"></textarea>
                     <button onclick="submitReview('${productName}')" class="submit-review-btn">
                         Dodaj opinię
                     </button>
@@ -509,8 +595,15 @@
 
         async function submitReview(productName) {
             const ratingInput = document.querySelector('input[name="rating"]:checked');
+            const contentInput = document.getElementById('reviewContent');
+
             if (!ratingInput) {
                 alert('Proszę wybrać ocenę!');
+                return;
+            }
+
+            if (!contentInput.value.trim()) {
+                alert('Proszę napisać treść opinii!');
                 return;
             }
 
@@ -523,11 +616,16 @@
                     },
                     body: JSON.stringify({
                         productId: productName,
-                        rating: rating
+                        rating: rating,
+                        content: contentInput.value.trim()
                     })
                 });
 
                 if (!response.ok) throw new Error('Błąd podczas dodawania opinii');
+
+                // Wyczyść formularz
+                contentInput.value = '';
+                ratingInput.checked = false;
 
                 // Odśwież wyświetlanie opinii
                 loadReviews(productName);
