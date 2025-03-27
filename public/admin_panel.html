@@ -898,15 +898,16 @@
                 // Sortuj opinie od najnowszych
                 allReviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-                reviewsList.innerHTML = allReviews.map((review, index) => `
+                reviewsList.innerHTML = allReviews.map(review => `
                     <div class="review-box">
-                        <button class="delete-review" onclick="deleteReview('${review.productName}', ${index})">
+                        <button class="delete-review" onclick="deleteReview('${review._id}')">
                             <i class="fas fa-trash"></i>
                         </button>
                         <h4>${review.productName}</h4>
                         <div class="stars">
                             ${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
                         </div>
+                        <p>${review.content}</p>
                         <div class="review-date">${new Date(review.createdAt).toLocaleString()}</div>
                     </div>
                 `).join('');
@@ -917,10 +918,10 @@
         }
 
         // Funkcja do usuwania opinii
-        async function deleteReview(productName, index) {
+        async function deleteReview(reviewId) {
             if (confirm('Czy na pewno chcesz usunąć tę opinię?')) {
                 try {
-                    const response = await fetch(`/api/reviews/${encodeURIComponent(productName)}`, {
+                    const response = await fetch(`/api/reviews/single/${reviewId}`, {
                         method: 'DELETE'
                     });
                     
@@ -929,7 +930,7 @@
                     }
 
                     displayReviews();
-                    logAdminAction('review_deleted', { productName, index });
+                    logAdminAction('review_deleted', { reviewId });
                 } catch (error) {
                     console.error('Błąd podczas usuwania opinii:', error);
                     alert('Wystąpił błąd podczas usuwania opinii. Spróbuj ponownie później.');

@@ -37,8 +37,19 @@ router.post('/', async (req, res) => {
     }
 });
 
+// Usuń pojedynczą opinię po ID
+router.delete('/single/:reviewId', async (req, res) => {
+    try {
+        await Review.findByIdAndDelete(req.params.reviewId);
+        res.status(200).json({ message: 'Opinia została usunięta' });
+    } catch (error) {
+        console.error('Błąd podczas usuwania opinii:', error);
+        res.status(500).json({ error: 'Błąd serwera' });
+    }
+});
+
 // Usuń wszystkie opinie dla danego produktu
-router.delete('/:productId', async (req, res) => {
+router.delete('/product/:productId', async (req, res) => {
     try {
         await Review.deleteMany({ productId: req.params.productId });
         res.status(200).json({ message: 'Wszystkie opinie dla produktu zostały usunięte' });
