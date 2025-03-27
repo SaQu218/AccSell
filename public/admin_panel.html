@@ -871,38 +871,69 @@
         document.body.appendChild(logsModal);
 
         // Funkcja do wyświetlania opinii
-        function displayReviews() {
+        async function displayReviews() {
             const reviewsList = document.getElementById('reviewsList');
-            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
             
-            if (reviews.length === 0) {
-                reviewsList.innerHTML = '<p>Brak opinii do wyświetlenia.</p>';
-                return;
-            }
+            try {
+                // Pobierz wszystkie produkty
+                const products = JSON.parse(localStorage.getItem('products')) || [];
+                
+                // Pobierz opinie dla każdego produktu
+                const allReviews = [];
+                for (const product of products) {
+                    const response = await fetch(`/api/reviews/${encodeURIComponent(product.name)}`);
+                    if (!response.ok) throw new Error('Błąd podczas pobierania opinii');
+                    const reviews = await response.json();
+                    allReviews.push(...reviews.map(review => ({
+                        ...review,
+                        productName: product.name
+                    })));
+                }
 
-            reviewsList.innerHTML = reviews.map((review, index) => `
-                <div class="review-box">
-                    <button class="delete-review" onclick="deleteReview(${index})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <h4>${review.name}</h4>
-                    <div class="stars">
-                        ${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
+                if (allReviews.length === 0) {
+                    reviewsList.innerHTML = '<p>Brak opinii do wyświetlenia.</p>';
+                    return;
+                }
+
+                // Sortuj opinie od najnowszych
+                allReviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                reviewsList.innerHTML = allReviews.map((review, index) => `
+                    <div class="review-box">
+                        <button class="delete-review" onclick="deleteReview('${review.productName}', ${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <h4>${review.productName}</h4>
+                        <div class="stars">
+                            ${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
+                        </div>
+                        <div class="review-date">${new Date(review.createdAt).toLocaleString()}</div>
                     </div>
-                    <p>${review.comment}</p>
-                    <div class="review-date">${new Date(review.date).toLocaleString()}</div>
-                </div>
-            `).join('');
+                `).join('');
+            } catch (error) {
+                console.error('Błąd podczas wyświetlania opinii:', error);
+                reviewsList.innerHTML = '<p>Wystąpił błąd podczas ładowania opinii.</p>';
+            }
         }
 
         // Funkcja do usuwania opinii
-        function deleteReview(index) {
+        async function deleteReview(productName, index) {
             if (confirm('Czy na pewno chcesz usunąć tę opinię?')) {
-                const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
-                reviews.splice(index, 1);
-                localStorage.setItem('reviews', JSON.stringify(reviews));
-                displayReviews();
-                logAdminAction('review_deleted', { index: index });
+                try {
+                    const response = await fetch(`/api/reviews/${encodeURIComponent(productName)}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Błąd podczas usuwania opinii');
+                    }
+
+                    displayReviews();
+                    logAdminAction('review_deleted', { productName, index });
+                } catch (error) {
+                    console.error('Błąd podczas usuwania opinii:', error);
+                    alert('Wystąpił błąd podczas usuwania opinii. Spróbuj ponownie później.');
+                }
             }
         }
 
