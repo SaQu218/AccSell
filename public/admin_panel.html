@@ -778,7 +778,7 @@
         });
 
         // System logowania działań
-        const adminLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
+        let adminLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
 
         function logAdminAction(action, details) {
             const log = {
@@ -859,15 +859,20 @@
         logsButton.className = 'btn btn-info ms-2';
         logsButton.innerHTML = '<i class="bi bi-journal-text"></i> Logi';
         logsButton.onclick = () => {
-            const logsHtml = adminLogs.map(log => `
-                <div class="log-entry">
-                    <strong>${new Date(log.timestamp).toLocaleString()}</strong>
-                    <br>
-                    Akcja: ${log.action}
-                    <br>
-                    Szczegóły: ${JSON.stringify(log.details)}
-                </div>
-            `).join('<hr>');
+            // Odśwież logi z localStorage
+            adminLogs = JSON.parse(localStorage.getItem('adminLogs') || '[]');
+            
+            const logsHtml = adminLogs.length > 0 ? 
+                adminLogs.map(log => `
+                    <div class="log-entry">
+                        <strong>${new Date(log.timestamp).toLocaleString()}</strong>
+                        <br>
+                        Akcja: ${log.action}
+                        <br>
+                        Szczegóły: ${JSON.stringify(log.details)}
+                    </div>
+                `).join('<hr>') :
+                '<p>Brak logów do wyświetlenia.</p>';
             
             const modal = new bootstrap.Modal(document.getElementById('logsModal'));
             document.getElementById('logsContent').innerHTML = logsHtml;
@@ -902,10 +907,16 @@
         // Funkcja do czyszczenia logów
         function clearLogs() {
             if (confirm('Czy na pewno chcesz wyczyścić wszystkie logi? Tej operacji nie można cofnąć.')) {
-                adminLogs.length = 0; // Wyczyść tablicę logów
-                localStorage.setItem('adminLogs', JSON.stringify(adminLogs));
+                adminLogs = []; // Wyczyść tablicę logów
+                localStorage.removeItem('adminLogs'); // Usuń logi z localStorage
                 document.getElementById('logsContent').innerHTML = '<p>Brak logów do wyświetlenia.</p>';
+                
+                // Dodaj wpis o wyczyszczeniu logów
                 logAdminAction('logs_cleared', { timestamp: new Date().toISOString() });
+                
+                // Zamknij modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('logsModal'));
+                modal.hide();
             }
         }
 
