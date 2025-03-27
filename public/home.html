@@ -43,8 +43,11 @@
         }
 
         .dropdown {
-            position: relative;
-            display: inline-block;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 1000;
         }
 
         .dropdown-button {
@@ -61,27 +64,36 @@
             transition: all 0.3s;
         }
 
-        .dropdown-button:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
         .dropdown-content {
-            display: none;
             position: fixed;
-            left: 0;
+            left: -200px;
             top: 0;
             height: 100vh;
             background-color: #0d1117;
-            min-width: 200px;
+            width: 200px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             z-index: 1000;
-            border-radius: 0;
-            border: none;
-            padding: 10px;
-            transition: 1s;
+            transition: 0.3s ease-in-out;
+            padding: 60px 0 20px 0;
         }
 
-        .dropdown-content a {
+        .dropdown:hover .dropdown-content {
+            left: 0;
+        }
+
+        .input {
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+            background-color: #0d1117;
+            justify-content: center;
+            border-radius: 10px;
+            transition: 1s;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .value {
             font-size: 15px;
             background-color: transparent;
             border: none;
@@ -94,26 +106,26 @@
             border-radius: 10px;
             transition: 1s;
             box-sizing: border-box;
-            align-items: center;
             text-decoration: none;
+            align-items: center;
         }
 
-        .dropdown-content a:hover {
+        .value:not(:active):hover,
+        .value:focus {
             display: flex;
             box-sizing: border-box;
             border: 2px solid #1a1f24;
             color: #637185;
-            background-color: transparent;
         }
 
-        .dropdown-content a:focus,
-        .dropdown-content a:active {
+        .value:focus,
+        .value:active {
             background-color: #1a1f24;
             outline: none;
             margin-left: 17px;
         }
 
-        .dropdown-content a::before {
+        .value::before {
             content: "";
             position: absolute;
             top: 5px;
@@ -126,12 +138,16 @@
             transition: 1s;
         }
 
-        .dropdown-content a:focus::before,
-        .dropdown-content a:active::before {
+        .value:focus::before,
+        .value:active::before {
             opacity: 1;
         }
 
-        .dropdown-content:hover > :not(:hover) {
+        .value svg {
+            width: 20px;
+        }
+
+        .input:hover > :not(.value:hover) {
             transition: 300ms;
             filter: blur(1.5px);
             transform: scale(0.95, 0.95);
@@ -517,12 +533,28 @@
         <div class="dropdown">
             <button class="dropdown-button">
                 <span class="menu-icon">&#9776;</span>
-                Konta
             </button>
             <div class="dropdown-content">
-                <a href="konto_fb.html">Konto FB</a>
-                <a href="konto_ig.html">Konto IG</a>
-                <a href="konto_steam.html">Konto Steam</a>
+                <div class="input">
+                    <a href="konto_fb.html" class="value">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98h2.396v8.01Z" fill="currentColor"/>
+                        </svg>
+                        Konto FB
+                    </a>
+                    <a href="konto_ig.html" class="value">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm3 15.5a3.5 3.5 0 0 1-3.5 3.5h-1A3.5 3.5 0 0 1 7 17.5v-1A3.5 3.5 0 0 1 10.5 13h1a3.5 3.5 0 0 1 3.5 3.5Zm1-9.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z" fill="currentColor"/>
+                        </svg>
+                        Konto IG
+                    </a>
+                    <a href="konto_steam.html" class="value">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2a10 10 0 0 0-10 10c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z" fill="currentColor"/>
+                        </svg>
+                        Konto Steam
+                    </a>
+                </div>
             </div>
         </div>
         <div class="navbar-buttons">
