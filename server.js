@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Twój klucz tajny Stripe
 const jwt = require('jsonwebtoken');
 const productsRouter = require('./api/products');
+const reviewsRouter = require('./api/reviews');
 
 const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
@@ -398,6 +399,9 @@ app.post('/update_profile', verifyToken, async (req, res) => {
 
 // Dodaj router produktów
 app.use('/api/products', verifyToken, productsRouter);
+
+// Dodaj router opinii
+app.use('/api/reviews', reviewsRouter);
 
 // Uruchomienie serwera
 app.listen(port, () => {

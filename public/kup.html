@@ -223,6 +223,86 @@
             color: #ffffff;
             margin: 0;
         }
+
+        /* Style dla sekcji opinii */
+        #reviews-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .average-rating {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .average-rating h3 {
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .review-rating {
+            color: #ffd700;
+        }
+
+        .review-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .review-form {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .rating-input {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .rating-input input[type="radio"] {
+            display: none;
+        }
+
+        .rating-input label {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #888;
+            transition: color 0.2s;
+        }
+
+        .rating-input input[type="radio"]:checked ~ label,
+        .rating-input label:hover,
+        .rating-input label:hover ~ label {
+            color: #ffd700;
+        }
+
+        .submit-review-btn {
+            background: #ffd700;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit-review-btn:hover {
+            background: #ffed4a;
+        }
     </style>
 </head>
 <body>
@@ -237,11 +317,17 @@
         <div class="account-box">
             <i class="fa-brands fa-facebook"></i>
             <p id="product-name" class="product-name"><strong>Ładowanie...</strong></p>
-            <div id="product-description"></div>
+            <div id="product-description" class="description">
+                <!-- Opis produktu zostanie dodany przez JavaScript -->
+            </div>
             <p id="product-price" class="price">Ładowanie...</p>
             <button class="buy-button" onclick="buyProduct()">
                 <i class="fas fa-shopping-bag"></i> KUP TERAZ
             </button>
+        </div>
+
+        <div id="reviews-container">
+            <!-- Opinie zostaną dodane przez JavaScript -->
         </div>
 
         <!-- System ocen -->
@@ -282,7 +368,9 @@
         </div>
     </div>
 
-    
+    <div class="button-container">
+        <!-- ... existing code ... -->
+    </div>
 
     <script>
         function getQueryParam(param) {
@@ -356,9 +444,98 @@
                 title = 'Witamy w dziale kont Facebook';
             }
             document.querySelector('.content h1').textContent = title;
+
+            // Pobierz i wyświetl opinie
+            loadReviews(product);
         }
 
-        window.onload = setProductDetails;
+        async function loadReviews(productName) {
+            try {
+                const response = await fetch(`/api/reviews/${encodeURIComponent(productName)}`);
+                if (!response.ok) throw new Error('Błąd podczas pobierania opinii');
+                
+                const reviews = await response.json();
+                const reviewsContainer = document.getElementById('reviews-container');
+                reviewsContainer.innerHTML = '';
+
+                // Oblicz średnią ocenę
+                const averageRating = reviews.length > 0 
+                    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length 
+                    : 0;
+
+                // Wyświetl średnią ocenę
+                const averageRatingHtml = `
+                    <div class="average-rating">
+                        <h3>Średnia ocena: ${averageRating.toFixed(1)} ⭐</h3>
+                    </div>
+                `;
+                reviewsContainer.innerHTML = averageRatingHtml;
+
+                // Wyświetl wszystkie opinie
+                reviews.forEach(review => {
+                    const reviewElement = document.createElement('div');
+                    reviewElement.className = 'review-item';
+                    reviewElement.innerHTML = `
+                        <div class="review-rating">
+                            ${'⭐'.repeat(review.rating)}
+                        </div>
+                        <div class="review-date">
+                            ${new Date(review.createdAt).toLocaleDateString()}
+                        </div>
+                    `;
+                    reviewsContainer.appendChild(reviewElement);
+                });
+
+                // Dodaj formularz do dodawania opinii
+                const reviewForm = document.createElement('div');
+                reviewForm.className = 'review-form';
+                reviewForm.innerHTML = `
+                    <h3>Dodaj opinię</h3>
+                    <div class="rating-input">
+                        ${[1, 2, 3, 4, 5].map(num => `
+                            <input type="radio" id="star${num}" name="rating" value="${num}">
+                            <label for="star${num}">⭐</label>
+                        `).join('')}
+                    </div>
+                    <button onclick="submitReview('${productName}')" class="submit-review-btn">
+                        Dodaj opinię
+                    </button>
+                `;
+                reviewsContainer.appendChild(reviewForm);
+            } catch (error) {
+                console.error('Błąd podczas ładowania opinii:', error);
+            }
+        }
+
+        async function submitReview(productName) {
+            const ratingInput = document.querySelector('input[name="rating"]:checked');
+            if (!ratingInput) {
+                alert('Proszę wybrać ocenę!');
+                return;
+            }
+
+            const rating = parseInt(ratingInput.value);
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        productId: productName,
+                        rating: rating
+                    })
+                });
+
+                if (!response.ok) throw new Error('Błąd podczas dodawania opinii');
+
+                // Odśwież wyświetlanie opinii
+                loadReviews(productName);
+            } catch (error) {
+                console.error('Błąd podczas dodawania opinii:', error);
+                alert('Wystąpił błąd podczas dodawania opinii. Spróbuj ponownie później.');
+            }
+        }
 
         async function buyProduct() {
             try {
@@ -429,89 +606,7 @@
             }
         }
 
-        // System ocen
-        function submitReview() {
-            const rating = document.getElementById('rating').value;
-            const comment = document.getElementById('reviewText').value;
-            const product = getQueryParam('product');
-            
-            if (!comment.trim()) {
-                alert('Proszę napisać opinię przed wysłaniem!');
-                return;
-            }
-
-            if (!product) {
-                alert('Nie znaleziono produktu!');
-                return;
-            }
-
-            // Pobierz opinie z localStorage i upewnij się, że to tablica
-            let reviews = JSON.parse(localStorage.getItem('reviews'));
-            if (!Array.isArray(reviews)) {
-                reviews = [];
-            }
-
-            const review = {
-                product: product,
-                rating: parseInt(rating),
-                comment: comment,
-                date: new Date().toISOString()
-            };
-
-            reviews.push(review);
-            localStorage.setItem('reviews', JSON.stringify(reviews));
-            
-            document.getElementById('reviewText').value = '';
-            displayReviews();
-        }
-
-        function displayReviews() {
-            const product = getQueryParam('product');
-            if (!product) return;
-
-            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
-            const productReviews = reviews.filter(r => r.product === product);
-            const reviewsList = document.getElementById('reviewsList');
-            
-            // Ustaw nazwę produktu w formularzu
-            document.getElementById('review-product-name').textContent = product;
-            
-            if (productReviews.length === 0) {
-                reviewsList.innerHTML = '<p class="text-muted">Brak opinii dla tego produktu.</p>';
-                return;
-            }
-
-            const averageRating = productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length;
-            
-            reviewsList.innerHTML = `
-                <div class="average-rating">
-                    <h4>Średnia ocena: ${averageRating.toFixed(1)}</h4>
-                    <div class="average-stars">
-                        ${'⭐'.repeat(Math.round(averageRating))}${'☆'.repeat(5-Math.round(averageRating))}
-                    </div>
-                    <p>Liczba opinii: ${productReviews.length}</p>
-                </div>
-                <div class="reviews-list">
-                    ${productReviews.map(review => `
-                        <div class="review-item">
-                            <div class="stars">
-                                ${'⭐'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}
-                            </div>
-                            <p>${review.comment}</p>
-                            <div class="review-date">
-                                ${new Date(review.date).toLocaleString()}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        // Wywołaj wyświetlanie opinii przy ładowaniu strony
-        window.addEventListener('load', () => {
-            setProductDetails();
-            displayReviews();
-        });
+        window.onload = setProductDetails;
     </script>
 </body>
 </html>

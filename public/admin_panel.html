@@ -487,7 +487,7 @@
             adminModal.show();
         }
 
-        function deleteProduct(productId) {
+        async function deleteProduct(productId) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
 
@@ -519,10 +519,28 @@
                         break;
                     case 'delete':
                         if (productToDelete) {
-                            products = products.filter(p => p.id !== productToDelete);
-                            localStorage.setItem('products', JSON.stringify(products));
-                            productToDelete = null;
-                            displayProducts();
+                            const productToRemove = products.find(p => p.id === productToDelete);
+                            if (productToRemove) {
+                                try {
+                                    // Usuń opinie z bazy danych
+                                    const response = await fetch(`/api/reviews/${encodeURIComponent(productToRemove.name)}`, {
+                                        method: 'DELETE'
+                                    });
+                                    
+                                    if (!response.ok) {
+                                        throw new Error('Błąd podczas usuwania opinii');
+                                    }
+
+                                    // Usuń produkt z localStorage
+                                    products = products.filter(p => p.id !== productToDelete);
+                                    localStorage.setItem('products', JSON.stringify(products));
+                                    productToDelete = null;
+                                    displayProducts();
+                                } catch (error) {
+                                    console.error('Błąd podczas usuwania produktu:', error);
+                                    alert('Wystąpił błąd podczas usuwania produktu. Spróbuj ponownie później.');
+                                }
+                            }
                         }
                         break;
                 }
